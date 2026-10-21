@@ -77,7 +77,7 @@ Content from the current site, to be **rewritten**, not copied verbatim:
 - [ ] Testimonial attribution + permission
 - [x] Logo files: SVG light + dark, in `src/assets/brand/`
 - [x] Palette (decided 2026-10-20): logo slate blue `#364F6B` as brand colour + **deep teal** accent (light `#0F766E` with white text, dark `#3CC6B6` with dark text; hover `#0B5F58` / `#6FD8CB`). All pairs pass WCAG AA. Chosen over lamp amber and ember orange.
-- [ ] Contact email for form delivery
+- [x] Contact email for form delivery: contact@fosterlite.com (also shown publicly, decided 2026-10-21)
 - [ ] Headshot / team photo (optional)
 
 Until content arrives, build with clearly marked placeholder copy (`TODO:` in content files). Do not invent client names, metrics or testimonials.
@@ -117,9 +117,11 @@ Until content arrives, build with clearly marked placeholder copy (`TODO:` in co
 - Client-side validation + server-side validation in the function.
 - Turnstile token verified server-side; hidden honeypot field rejects bots silently.
 - Show inline success/error states without a page reload. It must also work with JS disabled (falls back to a standard POST + thank-you page).
+  - **Decided 2026-10-21:** Turnstile needs JS, so a no-JS post (no token) is **not delivered**. The visitor is redirected to `/contact/error`, which shows contact@fosterlite.com instead. Server errors on the no-JS path land on the same page.
 - Secrets (email API key, Turnstile secret) live in host environment variables, never in the repo.
 - Basic rate limiting per IP (Netlify Blobs counter keyed on hashed IP, e.g. 5 submissions / 10 min).
-- Email: sent via Resend from e.g. `website@fosterlite.com` to the delivery inbox **[NEEDED]**, with `Reply-To` set to the submitter.
+- Email: sent via Resend (REST API, no SDK) from `CONTACT_FROM_EMAIL` to `CONTACT_TO_EMAIL` (contact@fosterlite.com), with `Reply-To` set to the submitter.
+- Implementation: `netlify/functions/contact.mts` (route `/api/contact`, POST only) wires `src/lib/contact-handler.ts` to Turnstile, Netlify Blobs and Resend. Validation rules in `src/lib/contact.ts` are shared with the browser script. Tests: `npm test`.
 - Env vars: `RESEND_API_KEY`, `TURNSTILE_SECRET_KEY`, `CONTACT_TO_EMAIL`, `CONTACT_FROM_EMAIL` (and public `PUBLIC_TURNSTILE_SITE_KEY`).
 
 ## 9. Future-proofing (not v1, but don't block it)
@@ -184,7 +186,6 @@ Run `npm run build && npm run check:launch`. It fails while any built page still
 - [ ] Testimonial has a real name and title, and `permission: true`
 - [ ] Hero headline, positioning line, About copy and differentiators supplied
 - [ ] Tech stack per service confirmed
-- [ ] Public contact email set in `src/config/site.ts`
 - [ ] Privacy policy reviewed, contact email and "last updated" date filled in
 - [ ] Default OG image designed and passed to `BaseLayout`
 

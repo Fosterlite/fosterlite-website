@@ -57,6 +57,42 @@ export const en = {
       honeypot: 'Leave this field empty',
       submit: 'Send message',
       sending: 'Sending…',
+      verifying: 'Checking you’re not a bot. This usually takes a second.',
+      errors: {
+        name: {
+          required: 'Enter your name.',
+          tooLong: 'Your name must be 100 characters or fewer.',
+        },
+        company: {
+          tooLong: 'Company name must be 100 characters or fewer.',
+        },
+        email: {
+          required: 'Enter your email address.',
+          invalid: 'Enter a valid email address, like name@company.com.',
+        },
+        message: {
+          required: 'Tell us a little about your project.',
+          tooShort: 'Add a bit more detail (at least 20 characters).',
+          tooLong: 'Your message must be 5,000 characters or fewer.',
+        },
+      },
+      status: {
+        fixFields: 'Please fix the highlighted fields.',
+        verification: 'We couldn’t confirm you’re not a bot. Please try again, or email us at',
+        rateLimited:
+          'You’ve sent several messages in a short time. Please wait a few minutes, or email us at',
+        server: 'Your message didn’t send. Please try again, or email us at',
+      },
+    },
+    success: {
+      heading: 'Thanks. Your message is on its way.',
+      body: 'We’ll get back to you shortly at the email address you gave.',
+    },
+    fallback: {
+      title: 'Message not sent',
+      heading: 'We couldn’t send your message.',
+      body: 'Our contact form needs JavaScript for its spam check, or something went wrong on our side. Please email us directly instead. Your message will reach the same inbox.',
+      back: 'Back to the contact page',
     },
     thanks: {
       title: 'Message sent',

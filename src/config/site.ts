@@ -6,8 +6,7 @@ export const site = {
   url: 'https://fosterlite.com',
   defaultDescription:
     'TODO: Fosterlite builds custom software and web platforms for growing businesses. Ottawa, Canada.',
-  // TODO: public contact email (SCOPE §5)
-  email: '' as string,
+  email: 'contact@fosterlite.com' as string,
   address: {
     locality: 'Ottawa',
     region: 'ON',

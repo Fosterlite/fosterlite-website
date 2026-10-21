@@ -4,14 +4,23 @@ import Button from '@/components/Button.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { site } from '@/config/site';
 import { t } from '@/i18n';
+import { LIMITS } from '@/lib/contact';
 
 const page = await getEntry('pages', 'contact');
 if (!page) throw new Error('Missing src/content/pages/contact.md');
 const { title, description, eyebrow, heading, lede } = page.data;
 const f = t.contact.form;
 
+// Cloudflare's always-pass test key keeps local builds working without real credentials.
+// Netlify builds must have the real key, or the deployed form could never pass verification.
+const onNetlify = process.env.NETLIFY === 'true';
+const turnstileSiteKey =
+  import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || (onNetlify ? '' : '1x00000000000000000000AA');
+if (!turnstileSiteKey) throw new Error('PUBLIC_TURNSTILE_SITE_KEY must be set in Netlify');
+
 const inputClass =
-  'mt-2 block w-full rounded-lg border border-line bg-bg px-4 py-3 text-base text-ink placeholder:text-ink-muted focus:border-focus';
+  'mt-2 block w-full rounded-lg border border-line bg-bg px-4 py-3 text-base text-ink placeholder:text-ink-muted focus:border-focus aria-[invalid=true]:border-danger';
+const errorClass = 'mt-2 text-sm font-medium text-danger';
 ---
 
 <BaseLayout title={title} description={description}>
@@ -24,80 +33,237 @@ const inputClass =
       {lede && <p class="mt-6 text-lg text-pretty text-ink-muted">{lede}</p>}
       <div class="mt-10 border-t border-line pt-8">
         <p class="text-sm text-ink-muted">{t.contact.emailLabel}</p>
-        {site.email ? (
-          <a
-            href={`mailto:${site.email}`}
-            class="mt-1 inline-block text-lg font-semibold hover:underline hover:underline-offset-4"
-          >
-            {site.email}
-          </a>
-        ) : (
-          <p class="mt-1 text-lg font-semibold">TODO: public contact email</p>
-        )}
+        <a
+          href={`mailto:${site.email}`}
+          class="mt-1 inline-block text-lg font-semibold hover:underline hover:underline-offset-4"
+        >
+          {site.email}
+        </a>
         <p class="mt-6 text-sm text-ink-muted">{t.footer.location}</p>
       </div>
     </div>
 
-    <!-- Phase 3 wires this to the Netlify Function (Turnstile, validation, Resend, inline states).
-         Without JS it posts normally and the function redirects to /contact/thanks. -->
-    <form method="post" action="/api/contact" class="grid gap-6 sm:grid-cols-2">
-      <div>
-        <label for="name" class="text-sm font-semibold">
-          {f.name}
-        </label>
-        <input id="name" name="name" type="text" autocomplete="name" required class={inputClass} />
+    <div>
+      <!-- Without JS this posts normally; the function redirects to /contact/thanks or /contact/error.
+           With JS, the script below validates inline and submits with fetch. -->
+      <form
+        method="post"
+        action="/api/contact"
+        class="grid gap-6 sm:grid-cols-2"
+        data-contact-form
+        data-email={site.email}
+      >
+        <div>
+          <label for="name" class="text-sm font-semibold">
+            {f.name}
+          </label>
+          <input
+            id="name"
+            name="name"
+            type="text"
+            autocomplete="name"
+            required
+            maxlength={LIMITS.name}
+            aria-describedby="name-error"
+            class={inputClass}
+          />
+          <p id="name-error" class={errorClass} hidden></p>
+        </div>
+        <div>
+          <label for="company" class="text-sm font-semibold">
+            {f.company} <span class="font-normal text-ink-muted">({f.optional})</span>
+          </label>
+          <input
+            id="company"
+            name="company"
+            type="text"
+            autocomplete="organization"
+            maxlength={LIMITS.company}
+            aria-describedby="company-error"
+            class={inputClass}
+          />
+          <p id="company-error" class={errorClass} hidden></p>
+        </div>
+        <div class="sm:col-span-2">
+          <label for="email" class="text-sm font-semibold">
+            {f.email}
+          </label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            autocomplete="email"
+            required
+            maxlength={LIMITS.email}
+            aria-describedby="email-error"
+            class={inputClass}
+          />
+          <p id="email-error" class={errorClass} hidden></p>
+        </div>
+        <div class="sm:col-span-2">
+          <label for="message" class="text-sm font-semibold">
+            {f.message}
+          </label>
+          <p id="message-hint" class="mt-1 text-sm text-ink-muted">
+            {f.messageHint}
+          </p>
+          <textarea
+            id="message"
+            name="message"
+            rows="6"
+            required
+            minlength={LIMITS.messageMin}
+            maxlength={LIMITS.messageMax}
+            aria-describedby="message-hint message-error"
+            class={inputClass}
+          ></textarea>
+          <p id="message-error" class={errorClass} hidden></p>
+        </div>
+        <div class="hidden" aria-hidden="true">
+          <label for="website">{f.honeypot}</label>
+          <input id="website" name="website" type="text" tabindex="-1" autocomplete="off" />
+        </div>
+        <div class="sm:col-span-2">
+          <div
+            class="cf-turnstile"
+            data-sitekey={turnstileSiteKey}
+            data-theme="auto"
+            data-size="flexible"
+          ></div>
+        </div>
+        <div class="flex flex-wrap items-center gap-4 sm:col-span-2">
+          <Button type="submit" size="lg" data-submit>
+            {f.submit}
+          </Button>
+          <p data-status role="status" class="text-sm text-ink-muted"></p>
+        </div>
+        <p
+          data-error
+          role="alert"
+          class="rounded-lg border border-danger px-4 py-3 text-sm font-medium text-danger sm:col-span-2"
+          hidden
+        ></p>
+      </form>
+
+      <div data-contact-success tabindex="-1" class="rounded-2xl bg-band p-8 sm:p-10" hidden>
+        <h2 class="text-2xl font-semibold text-balance">{t.contact.success.heading}</h2>
+        <p class="mt-3 text-ink-muted">{t.contact.success.body}</p>
       </div>
-      <div>
-        <label for="company" class="text-sm font-semibold">
-          {f.company} <span class="font-normal text-ink-muted">({f.optional})</span>
-        </label>
-        <input
-          id="company"
-          name="company"
-          type="text"
-          autocomplete="organization"
-          class={inputClass}
-        />
-      </div>
-      <div class="sm:col-span-2">
-        <label for="email" class="text-sm font-semibold">
-          {f.email}
-        </label>
-        <input
-          id="email"
-          name="email"
-          type="email"
-          autocomplete="email"
-          required
-          class={inputClass}
-        />
-      </div>
-      <div class="sm:col-span-2">
-        <label for="message" class="text-sm font-semibold">
-          {f.message}
-        </label>
-        <p id="message-hint" class="mt-1 text-sm text-ink-muted">
-          {f.messageHint}
-        </p>
-        <textarea
-          id="message"
-          name="message"
-          rows="6"
-          minlength="20"
-          required
-          aria-describedby="message-hint"
-          class={inputClass}
-        ></textarea>
-      </div>
-      <div class="hidden" aria-hidden="true">
-        <label for="website">{f.honeypot}</label>
-        <input id="website" name="website" type="text" tabindex="-1" autocomplete="off" />
-      </div>
-      <div class="sm:col-span-2">
-        <Button type="submit" size="lg">
-          {f.submit}
-        </Button>
-      </div>
-    </form>
+    </div>
   </div>
 </BaseLayout>
+
+<script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+
+<script>
+  import { validateContact, type ContactResult, type Field, type FieldErrors } from '@/lib/contact';
+  import { t } from '@/i18n';
+
+  declare global {
+    interface Window {
+      turnstile?: { reset: (widget?: string) => void };
+    }
+  }
+
+  const f = t.contact.form;
+  const form = document.querySelector<HTMLFormElement>('[data-contact-form]');
+
+  if (form) {
+    const email = form.dataset.email ?? '';
+    const submit = form.querySelector<HTMLButtonElement>('[data-submit]')!;
+    const status = form.querySelector<HTMLElement>('[data-status]')!;
+    const errorBox = form.querySelector<HTMLElement>('[data-error]')!;
+    const success = document.querySelector<HTMLElement>('[data-contact-success]')!;
+    const fields: Field[] = ['name', 'company', 'email', 'message'];
+
+    // The script owns validation messages from here; native bubbles would duplicate them.
+    form.noValidate = true;
+
+    const showErrors = (errors: FieldErrors) => {
+      for (const field of fields) {
+        const input = form.elements.namedItem(field) as HTMLInputElement | HTMLTextAreaElement;
+        const message = document.getElementById(`${field}-error`)!;
+        const code = errors[field];
+        const text = code ? (f.errors[field] as Record<string, string>)[code] : undefined;
+        input.setAttribute('aria-invalid', String(Boolean(text)));
+        message.textContent = text ?? '';
+        message.hidden = !text;
+      }
+      const first = fields.find((field) => errors[field]);
+      if (first) (form.elements.namedItem(first) as HTMLElement).focus();
+    };
+
+    const showFailure = (text?: string) => {
+      errorBox.hidden = !text;
+      errorBox.textContent = '';
+      if (!text) return;
+      errorBox.append(`${text} `);
+      const link = document.createElement('a');
+      link.href = `mailto:${email}`;
+      link.textContent = email;
+      link.className = 'underline underline-offset-4';
+      errorBox.append(link, '.');
+    };
+
+    const setBusy = (busy: boolean, label = '') => {
+      submit.disabled = busy;
+      submit.textContent = busy ? f.sending : f.submit;
+      status.textContent = label;
+    };
+
+    // Re-validate a field as soon as the visitor fixes it.
+    form.addEventListener('input', (event) => {
+      const target = event.target as HTMLInputElement;
+      if (target.getAttribute('aria-invalid') !== 'true') return;
+      const { errors } = validateContact(Object.fromEntries(new FormData(form)));
+      if (!errors[target.name as Field]) {
+        target.setAttribute('aria-invalid', 'false');
+        document.getElementById(`${target.name}-error`)!.hidden = true;
+      }
+    });
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      showFailure();
+      const data = new FormData(form);
+      const { errors } = validateContact(Object.fromEntries(data));
+      showErrors(errors);
+      if (Object.keys(errors).length > 0) {
+        status.textContent = f.status.fixFields;
+        return;
+      }
+      if (!data.get('cf-turnstile-response')) {
+        status.textContent = f.verifying;
+        return;
+      }
+
+      setBusy(true, f.sending);
+      let result: ContactResult;
+      try {
+        const res = await fetch(form.action, {
+          method: 'POST',
+          body: data,
+          headers: { accept: 'application/json' },
+        });
+        result = (await res.json()) as ContactResult;
+      } catch {
+        result = { ok: false, error: 'server' };
+      }
+      setBusy(false);
+
+      if (result.ok) {
+        form.hidden = true;
+        success.hidden = false;
+        success.focus();
+        return;
+      }
+      window.turnstile?.reset();
+      if (result.error === 'validation') {
+        showErrors(result.fields);
+        status.textContent = f.status.fixFields;
+      } else {
+        showFailure(f.status[result.error]);
+      }
+    });
+  }
+</script>

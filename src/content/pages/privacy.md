@@ -31,7 +31,7 @@ We keep enquiries for as long as needed to respond and, if we work together, for
 
 ## Your rights
 
-You can ask to see, correct or delete the personal information we hold about you. Contact us at TODO: privacy contact email.
+You can ask to see, correct or delete the personal information we hold about you. Contact us at [contact@fosterlite.com](mailto:contact@fosterlite.com).
 
 ## Changes
 
