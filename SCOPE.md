@@ -189,7 +189,7 @@ Run `npm run build && npm run check:launch`. It fails while any built page still
 - [x] Tech stack per service confirmed
 - [x] Testimonial attribution and `permission: true`
 - [ ] No product names anywhere in the build while `/work` is suspended
-- [ ] Privacy policy reviewed, contact email and "last updated" date filled in
+- [x] Privacy policy: review note removed and dated October 21, 2026. Lawyer review in progress (Demi, 2026-10-21); update the date if the text changes.
 - [ ] Default OG image designed and passed to `BaseLayout`
 
 ## 13. Open decisions (summary)

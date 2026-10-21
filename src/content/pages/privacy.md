@@ -2,10 +2,8 @@
 title: Privacy policy
 description: 'How Fosterlite collects, uses and protects personal information submitted through this website.'
 heading: Privacy policy
-lede: 'Last updated: TODO (set at launch)'
+lede: 'Last updated: October 21, 2026'
 ---
-
-TODO: Draft for review. Not legal advice; have it checked before launch.
 
 Fosterlite Solutions Ltd. ("Fosterlite", "we") respects your privacy and handles personal information in line with Canada's _Personal Information Protection and Electronic Documents Act_ (PIPEDA).
 
