@@ -1,0 +1,15 @@
+---
+import logoLight from '@/assets/brand/logo-light.svg?url';
+import logoDark from '@/assets/brand/logo-dark.svg?url';
+
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<picture>
+  <source srcset={logoDark} media="(prefers-color-scheme: dark)" />
+  <img src={logoLight} alt="Fosterlite" width="1327" height="418" class={className} />
+</picture>

@@ -1,0 +1,6 @@
+# Old WordPress URLs (SCOPE §10). Netlify ignores trailing slashes when matching.
+/contact-us     /contact   301
+/sample-page    /          301
+/feed           /          301
+/wp-admin/*     /          301
+/wp-login.php   /          301

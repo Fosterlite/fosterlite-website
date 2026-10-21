@@ -1,0 +1,51 @@
+---
+import Logo from './Logo.astro';
+import { contactHref, nav, site } from '@/config/site';
+import { t } from '@/i18n';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="border-t border-line bg-surface">
+  <div class="mx-auto grid max-w-content gap-10 px-4 py-14 sm:px-6 md:grid-cols-[1fr_auto] lg:px-8">
+    <div class="max-w-sm">
+      <Logo class="h-7 w-auto" />
+      <p class="mt-4 text-sm text-ink-muted">{t.footer.tagline}</p>
+      <p class="mt-2 text-sm text-ink-muted">{t.footer.location}</p>
+      {site.email && (
+        <p class="mt-2 text-sm">
+          <a href={`mailto:${site.email}`} class="underline-offset-4 hover:underline">
+            {site.email}
+          </a>
+        </p>
+      )}
+    </div>
+    <nav aria-label={t.footer.navLabel}>
+      <ul class="grid gap-3 text-sm font-medium">
+        {nav.map((item) => (
+          <li>
+            <a href={item.href} class="text-ink-muted hover:text-ink">
+              {item.label}
+            </a>
+          </li>
+        ))}
+        <li>
+          <a href={contactHref} class="text-ink-muted hover:text-ink">
+            {t.nav.contact}
+          </a>
+        </li>
+        <li>
+          <a href="/privacy" class="text-ink-muted hover:text-ink">
+            {t.footer.privacy}
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+  <div class="border-t border-line">
+    <p class="mx-auto max-w-content px-4 py-6 text-xs text-ink-muted sm:px-6 lg:px-8">
+      © {year}
+      {t.footer.legal}. {t.footer.rights}
+    </p>
+  </div>
+</footer>
