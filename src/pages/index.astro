@@ -1,37 +1,84 @@
 ---
+import { getCollection, getEntry } from 'astro:content';
 import Button from '@/components/Button.astro';
+import CaseStudyCard from '@/components/CaseStudyCard.astro';
+import CTA from '@/components/CTA.astro';
+import HeroArt from '@/components/HeroArt.astro';
 import Section from '@/components/Section.astro';
+import ServiceCard from '@/components/ServiceCard.astro';
+import Testimonial from '@/components/Testimonial.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { contactHref } from '@/config/site';
 import { t } from '@/i18n';
 
-// Phase 1 placeholder. Real sections and copy arrive in Phase 2 via content collections.
+const page = await getEntry('pages', 'home');
+if (!page) throw new Error('Missing src/content/pages/home.md');
+const { description, eyebrow, heading, lede, aboutTeaser } = page.data;
+
+const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
+const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.order).slice(0, 3);
+const testimonial = (await getCollection('testimonials')).find((entry) => entry.data.featured);
 ---
 
-<BaseLayout>
-  <section class="mx-auto max-w-content px-4 pt-20 pb-24 sm:px-6 sm:pt-28 sm:pb-32 lg:px-8">
-    <p class="mb-5 text-sm font-semibold tracking-widest text-brand uppercase">
-      Software &amp; consulting · Ottawa
-    </p>
-    <h1 class="max-w-4xl text-display font-semibold text-balance">
-      TODO: Specific headline. Who we serve and the outcome we deliver.
-    </h1>
-    <p class="mt-6 max-w-2xl text-lg text-pretty text-ink-muted sm:text-xl">
-      TODO: One-line positioning. Placeholder until Demi supplies the revised hero copy (SCOPE §5).
-    </p>
-    <div class="mt-10 flex flex-wrap gap-3">
-      <Button href={contactHref} size="lg">
-        {t.cta.primary}
-      </Button>
-      <Button href="/services" variant="secondary" size="lg">
-        {t.nav.services}
-      </Button>
+<BaseLayout description={description}>
+  <section class="mx-auto grid max-w-content items-center gap-12 px-4 pt-16 pb-20 sm:px-6 sm:pt-24 sm:pb-28 lg:grid-cols-[1fr_22rem] lg:px-8">
+    <div>
+      {eyebrow && (
+        <p class="mb-5 text-sm font-semibold tracking-widest text-brand uppercase">{eyebrow}</p>
+      )}
+      <h1 class="max-w-4xl text-display font-semibold text-balance">{heading}</h1>
+      {lede && <p class="mt-6 max-w-2xl text-lg text-pretty text-ink-muted sm:text-xl">{lede}</p>}
+      <div class="mt-10 flex flex-wrap gap-3">
+        <Button href={contactHref} size="lg">
+          {t.cta.primary}
+        </Button>
+        <Button href="/services" variant="secondary" size="lg">
+          {t.nav.services}
+        </Button>
+      </div>
     </div>
+    <HeroArt class="hidden w-full lg:block" />
   </section>
 
-  <Section id="services" eyebrow={t.nav.services} title="TODO: Services overview" tone="surface">
-    <p class="reveal max-w-2xl text-ink-muted">
-      Custom software development, web design and IT consulting. Built out in Phase 2.
-    </p>
+  <Section id="services" title={t.home.servicesHeading} tone="surface">
+    <div class="grid gap-5 md:grid-cols-3">
+      {services.map((service) => (
+        <ServiceCard service={service} />
+      ))}
+    </div>
   </Section>
+
+  {work.length > 0 && (
+    <Section id="work" title={t.home.workHeading}>
+      <div class="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+        {work.map((study) => (
+          <CaseStudyCard study={study} />
+        ))}
+      </div>
+      <div class="mt-10">
+        <Button href="/work" variant="secondary">
+          {t.home.workAll}
+        </Button>
+      </div>
+    </Section>
+  )}
+
+  {testimonial && (
+    <Section tone="surface" class="reveal">
+      <Testimonial testimonial={testimonial} />
+    </Section>
+  )}
+
+  {aboutTeaser && (
+    <Section id="about" title={aboutTeaser.heading}>
+      <p class="max-w-2xl text-lg text-ink-muted">{aboutTeaser.text}</p>
+      <div class="mt-8">
+        <Button href="/about" variant="secondary">
+          {t.home.aboutLink}
+        </Button>
+      </div>
+    </Section>
+  )}
+
+  <CTA />
 </BaseLayout>

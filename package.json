@@ -14,6 +14,7 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "check:launch": "node scripts/check-launch.mjs",
     "optimize:svg": "svgo --multipass -f design/brand -o src/assets/brand",
     "astro": "astro"
   },

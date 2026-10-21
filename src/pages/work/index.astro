@@ -1,0 +1,24 @@
+---
+import { getCollection, getEntry } from 'astro:content';
+import CaseStudyCard from '@/components/CaseStudyCard.astro';
+import CTA from '@/components/CTA.astro';
+import PageHero from '@/components/PageHero.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+
+const page = await getEntry('pages', 'work');
+if (!page) throw new Error('Missing src/content/pages/work.md');
+
+const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.order);
+---
+
+<BaseLayout title={page.data.title} description={page.data.description}>
+  <PageHero eyebrow={page.data.eyebrow} heading={page.data.heading} lede={page.data.lede} />
+  <div class="mx-auto max-w-content px-4 pb-8 sm:px-6 lg:px-8">
+    <div class="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+      {work.map((study) => (
+        <CaseStudyCard study={study} headingLevel="h2" />
+      ))}
+    </div>
+  </div>
+  <CTA />
+</BaseLayout>

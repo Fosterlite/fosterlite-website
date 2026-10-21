@@ -82,6 +82,8 @@ Content from the current site, to be **rewritten**, not copied verbatim:
 
 Until content arrives, build with clearly marked placeholder copy (`TODO:` in content files). Do not invent client names, metrics or testimonials.
 
+**Where content lives (Phase 2):** `src/content/pages/*.md` (hero, meta and body copy per page), `src/content/services/*.md`, `src/content/work/*.md` (case studies; body uses `## Problem / ## Approach / ## Outcome`), `src/content/testimonials/*.md`. Schemas in `src/content.config.ts` fail the build on missing fields. The testimonial quote is shortened from the current site's version.
+
 ## 6. Design direction
 
 - Clean, confident, restrained. Lots of whitespace, strong typography, one accent color.
@@ -173,6 +175,18 @@ Until content arrives, build with clearly marked placeholder copy (`TODO:` in co
 | 4. Content | Real copy, case studies, images, OG image |
 | 5. Polish | Accessibility + Lighthouse pass, SEO metadata, headers, 404, privacy page |
 | 6. Launch | DNS audit, redirects, cutover, post-launch verification (§10) |
+
+## 12a. Launch checklist (blocking)
+
+Run `npm run build && npm run check:launch`. It fails while any built page still contains `TODO`, which covers:
+
+- [ ] Every `src/content/work/*.md` entry is real content with `placeholder: false` (2–3 case studies)
+- [ ] Testimonial has a real name and title, and `permission: true`
+- [ ] Hero headline, positioning line, About copy and differentiators supplied
+- [ ] Tech stack per service confirmed
+- [ ] Public contact email set in `src/config/site.ts`
+- [ ] Privacy policy reviewed, contact email and "last updated" date filled in
+- [ ] Default OG image designed and passed to `BaseLayout`
 
 ## 13. Open decisions (summary)
 

@@ -20,6 +20,7 @@
   --c-accent-hover: #0b5f58;
   --c-on-accent: #ffffff;
   --c-focus: #364f6b;
+  --c-band: #e7f2f0; /* teal-tinted panel for the closing CTA */
 }
 
 @media (prefers-color-scheme: dark) {
@@ -35,6 +36,7 @@
     --c-accent-hover: #6fd8cb;
     --c-on-accent: #0e151d;
     --c-focus: #3cc6b6;
+    --c-band: #12262a;
   }
 }
 
@@ -50,6 +52,7 @@
   --color-accent-hover: var(--c-accent-hover);
   --color-on-accent: var(--c-on-accent);
   --color-focus: var(--c-focus);
+  --color-band: var(--c-band);
 
   --font-sans: var(--font-instrument-sans);
 }
@@ -83,6 +86,40 @@
   @media (prefers-reduced-motion: reduce) {
     html {
       scroll-behavior: auto;
+    }
+  }
+}
+
+/* Long-form copy rendered from Markdown (about, case studies, privacy). Kept in-house instead of
+   pulling in @tailwindcss/typography, per the minimal-dependencies rule. */
+@layer components {
+  .prose {
+    @apply max-w-[65ch] text-lg leading-relaxed text-ink-muted;
+
+    & > * + * {
+      @apply mt-5;
+    }
+    & h2 {
+      @apply mt-14 text-2xl font-semibold tracking-tight text-ink;
+    }
+    & h3 {
+      @apply mt-10 text-xl font-semibold text-ink;
+    }
+    & h2 + *,
+    & h3 + * {
+      @apply mt-4;
+    }
+    & strong {
+      @apply font-semibold text-ink;
+    }
+    & a {
+      @apply font-medium text-accent underline underline-offset-4;
+    }
+    & ul {
+      @apply list-disc space-y-2 pl-6 marker:text-line;
+    }
+    & ol {
+      @apply list-decimal space-y-2 pl-6;
     }
   }
 }

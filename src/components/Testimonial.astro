@@ -1,0 +1,39 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { t } from '@/i18n';
+
+interface Props {
+  testimonial: CollectionEntry<'testimonials'>;
+}
+
+const { quote, name, role, company, permission } = Astro.props.testimonial.data;
+const initials = company
+  .split(/\s+/)
+  .map((word) => word[0])
+  .join('')
+  .slice(0, 2)
+  .toUpperCase();
+---
+
+<figure class="mx-auto max-w-3xl">
+  <blockquote class="text-2xl leading-snug font-medium text-balance sm:text-3xl">
+    <p>“{quote}”</p>
+  </blockquote>
+  <figcaption class="mt-8 flex items-center gap-4">
+    <span
+      aria-hidden="true"
+      class="flex size-12 shrink-0 items-center justify-center rounded-full bg-brand text-sm font-semibold text-on-brand"
+    >
+      {initials}
+    </span>
+    <span class="text-sm">
+      <span class="block font-semibold">{name}</span>
+      <span class="block text-ink-muted">
+        {role}, {company}
+      </span>
+      {!permission && (
+        <span class="mt-1 block text-xs text-ink-muted">{t.testimonial.pending}</span>
+      )}
+    </span>
+  </figcaption>
+</figure>

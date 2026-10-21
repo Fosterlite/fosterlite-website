@@ -1,0 +1,103 @@
+---
+import { getEntry } from 'astro:content';
+import Button from '@/components/Button.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { site } from '@/config/site';
+import { t } from '@/i18n';
+
+const page = await getEntry('pages', 'contact');
+if (!page) throw new Error('Missing src/content/pages/contact.md');
+const { title, description, eyebrow, heading, lede } = page.data;
+const f = t.contact.form;
+
+const inputClass =
+  'mt-2 block w-full rounded-lg border border-line bg-bg px-4 py-3 text-base text-ink placeholder:text-ink-muted focus:border-focus';
+---
+
+<BaseLayout title={title} description={description}>
+  <div class="mx-auto grid max-w-content gap-12 px-4 pt-16 pb-24 sm:px-6 sm:pt-24 lg:grid-cols-[2fr_3fr] lg:gap-20 lg:px-8">
+    <div>
+      {eyebrow && (
+        <p class="mb-4 text-sm font-semibold tracking-widest text-brand uppercase">{eyebrow}</p>
+      )}
+      <h1 class="text-headline font-semibold text-balance">{heading}</h1>
+      {lede && <p class="mt-6 text-lg text-pretty text-ink-muted">{lede}</p>}
+      <div class="mt-10 border-t border-line pt-8">
+        <p class="text-sm text-ink-muted">{t.contact.emailLabel}</p>
+        {site.email ? (
+          <a
+            href={`mailto:${site.email}`}
+            class="mt-1 inline-block text-lg font-semibold hover:underline hover:underline-offset-4"
+          >
+            {site.email}
+          </a>
+        ) : (
+          <p class="mt-1 text-lg font-semibold">TODO: public contact email</p>
+        )}
+        <p class="mt-6 text-sm text-ink-muted">{t.footer.location}</p>
+      </div>
+    </div>
+
+    <!-- Phase 3 wires this to the Netlify Function (Turnstile, validation, Resend, inline states).
+         Without JS it posts normally and the function redirects to /contact/thanks. -->
+    <form method="post" action="/api/contact" class="grid gap-6 sm:grid-cols-2">
+      <div>
+        <label for="name" class="text-sm font-semibold">
+          {f.name}
+        </label>
+        <input id="name" name="name" type="text" autocomplete="name" required class={inputClass} />
+      </div>
+      <div>
+        <label for="company" class="text-sm font-semibold">
+          {f.company} <span class="font-normal text-ink-muted">({f.optional})</span>
+        </label>
+        <input
+          id="company"
+          name="company"
+          type="text"
+          autocomplete="organization"
+          class={inputClass}
+        />
+      </div>
+      <div class="sm:col-span-2">
+        <label for="email" class="text-sm font-semibold">
+          {f.email}
+        </label>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          autocomplete="email"
+          required
+          class={inputClass}
+        />
+      </div>
+      <div class="sm:col-span-2">
+        <label for="message" class="text-sm font-semibold">
+          {f.message}
+        </label>
+        <p id="message-hint" class="mt-1 text-sm text-ink-muted">
+          {f.messageHint}
+        </p>
+        <textarea
+          id="message"
+          name="message"
+          rows="6"
+          minlength="20"
+          required
+          aria-describedby="message-hint"
+          class={inputClass}
+        ></textarea>
+      </div>
+      <div class="hidden" aria-hidden="true">
+        <label for="website">{f.honeypot}</label>
+        <input id="website" name="website" type="text" tabindex="-1" autocomplete="off" />
+      </div>
+      <div class="sm:col-span-2">
+        <Button type="submit" size="lg">
+          {f.submit}
+        </Button>
+      </div>
+    </form>
+  </div>
+</BaseLayout>
