@@ -21,6 +21,7 @@
   --c-on-accent: #ffffff;
   --c-focus: #364f6b;
   --c-band: #e7f2f0; /* teal-tinted panel for the closing CTA */
+  --c-danger: #b42318;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -37,6 +38,7 @@
     --c-on-accent: #0e151d;
     --c-focus: #3cc6b6;
     --c-band: #12262a;
+    --c-danger: #f97066;
   }
 }
 
@@ -53,6 +55,7 @@
   --color-on-accent: var(--c-on-accent);
   --color-focus: var(--c-focus);
   --color-band: var(--c-band);
+  --color-danger: var(--c-danger);
 
   --font-sans: var(--font-instrument-sans);
 }

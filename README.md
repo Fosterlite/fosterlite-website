@@ -17,6 +17,7 @@ npm run dev            # http://localhost:4321
 | `npm run dev`                     | Dev server with hot reload                             |
 | `npm run build`                   | Type-check (`astro check`) then build to `dist/`       |
 | `npm run preview`                 | Serve the built `dist/` locally                        |
+| `npm test`                        | Contact form handler tests (Node built-in test runner) |
 | `npm run lint`                    | ESLint (TypeScript + Astro + a11y rules)               |
 | `npm run format` / `format:check` | Prettier                                               |
 | `npm run optimize:svg`            | Optimise `design/brand/*.svg` into `src/assets/brand/` |
@@ -39,14 +40,20 @@ src/styles/global.css  Design tokens (colours, type scale) and base styles
 
 Set these in Netlify → Site configuration → Environment variables. Never commit them.
 
-| Variable                    | Used for                                                |
-| --------------------------- | ------------------------------------------------------- |
-| `PUBLIC_CF_BEACON_TOKEN`    | Cloudflare Web Analytics. Analytics are off when unset. |
-| `PUBLIC_TURNSTILE_SITE_KEY` | Contact form spam check (public key). Phase 3.          |
-| `TURNSTILE_SECRET_KEY`      | Contact form spam check (server). Phase 3.              |
-| `RESEND_API_KEY`            | Sending contact form emails. Phase 3.                   |
-| `CONTACT_TO_EMAIL`          | Inbox that receives enquiries. Phase 3.                 |
-| `CONTACT_FROM_EMAIL`        | Sender address, e.g. `website@fosterlite.com`. Phase 3. |
+| Variable                    | Used for                                                                                              |
+| --------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `PUBLIC_CF_BEACON_TOKEN`    | Cloudflare Web Analytics. Analytics are off when unset.                                               |
+| `PUBLIC_TURNSTILE_SITE_KEY` | Contact form spam check (public key).                                                                 |
+| `TURNSTILE_SECRET_KEY`      | Contact form spam check (server).                                                                     |
+| `RESEND_API_KEY`            | Sending contact form emails.                                                                          |
+| `CONTACT_TO_EMAIL`          | Inbox that receives enquiries.                                                                        |
+| `CONTACT_FROM_EMAIL`        | Sender, e.g. `Fosterlite Website <website@fosterlite.com>`. Must be on the domain verified in Resend. |
+
+## Contact form
+
+`POST /api/contact` is a Netlify Function (`netlify/functions/contact.mts`). It checks the hidden honeypot field, validates input (`src/lib/contact.ts`, shared with the browser), verifies the Cloudflare Turnstile token, applies a per-IP limit of 5 messages per 10 minutes (Netlify Blobs, hashed IPs), then sends the email through Resend.
+
+Without JavaScript the form still posts, but Turnstile can't run, so the visitor is redirected to `/contact/error`, which shows the email address. Local builds use Cloudflare's always-pass test site key; Netlify builds fail if `PUBLIC_TURNSTILE_SITE_KEY` is missing.
 
 ## Deploy
 
