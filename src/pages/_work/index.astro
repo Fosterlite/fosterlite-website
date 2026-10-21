@@ -1,22 +1,26 @@
 ---
+// Parked: files under src/pages/_* are not routed. Move this folder back to src/pages/work/
+// when site.features.work is turned on (SCOPE §4).
 import { getCollection, getEntry } from 'astro:content';
-import CaseStudyCard from '@/components/CaseStudyCard.astro';
 import CTA from '@/components/CTA.astro';
 import PageHero from '@/components/PageHero.astro';
+import ProductCard from '@/components/ProductCard.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 
 const page = await getEntry('pages', 'work');
 if (!page) throw new Error('Missing src/content/pages/work.md');
 
-const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.order);
+const products = (await getCollection('work', (entry) => !entry.data.draft)).sort(
+  (a, b) => a.data.order - b.data.order,
+);
 ---
 
 <BaseLayout title={page.data.title} description={page.data.description}>
   <PageHero eyebrow={page.data.eyebrow} heading={page.data.heading} lede={page.data.lede} />
   <div class="mx-auto max-w-content px-4 pb-8 sm:px-6 lg:px-8">
-    <div class="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-      {work.map((study) => (
-        <CaseStudyCard study={study} headingLevel="h2" />
+    <div class="grid gap-5 md:grid-cols-2">
+      {products.map((product) => (
+        <ProductCard product={product} headingLevel="h2" />
       ))}
     </div>
   </div>

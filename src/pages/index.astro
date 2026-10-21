@@ -1,14 +1,14 @@
 ---
 import { getCollection, getEntry } from 'astro:content';
 import Button from '@/components/Button.astro';
-import CaseStudyCard from '@/components/CaseStudyCard.astro';
 import CTA from '@/components/CTA.astro';
 import HeroArt from '@/components/HeroArt.astro';
+import ProductCard from '@/components/ProductCard.astro';
 import Section from '@/components/Section.astro';
 import ServiceCard from '@/components/ServiceCard.astro';
 import Testimonial from '@/components/Testimonial.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import { contactHref } from '@/config/site';
+import { contactHref, site } from '@/config/site';
 import { t } from '@/i18n';
 
 const page = await getEntry('pages', 'home');
@@ -16,7 +16,11 @@ if (!page) throw new Error('Missing src/content/pages/home.md');
 const { description, eyebrow, heading, lede, aboutTeaser } = page.data;
 
 const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
-const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.order).slice(0, 3);
+const products = site.features.work
+  ? (await getCollection('work', (entry) => !entry.data.draft)).sort(
+      (a, b) => a.data.order - b.data.order,
+    )
+  : [];
 const testimonial = (await getCollection('testimonials')).find((entry) => entry.data.featured);
 ---
 
@@ -33,7 +37,7 @@ const testimonial = (await getCollection('testimonials')).find((entry) => entry.
           {t.cta.primary}
         </Button>
         <Button href="/services" variant="secondary" size="lg">
-          {t.nav.services}
+          {t.cta.services}
         </Button>
       </div>
     </div>
@@ -48,11 +52,11 @@ const testimonial = (await getCollection('testimonials')).find((entry) => entry.
     </div>
   </Section>
 
-  {work.length > 0 && (
+  {products.length > 0 && (
     <Section id="work" title={t.home.workHeading}>
-      <div class="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-        {work.map((study) => (
-          <CaseStudyCard study={study} />
+      <div class="grid gap-5 md:grid-cols-2">
+        {products.map((product) => (
+          <ProductCard product={product} />
         ))}
       </div>
       <div class="mt-10">
@@ -64,13 +68,13 @@ const testimonial = (await getCollection('testimonials')).find((entry) => entry.
   )}
 
   {testimonial && (
-    <Section tone="surface" class="reveal">
+    <Section class="reveal">
       <Testimonial testimonial={testimonial} />
     </Section>
   )}
 
   {aboutTeaser && (
-    <Section id="about" title={aboutTeaser.heading}>
+    <Section id="about" title={aboutTeaser.heading} tone="surface">
       <p class="max-w-2xl text-lg text-ink-muted">{aboutTeaser.text}</p>
       <div class="mt-8">
         <Button href="/about" variant="secondary">

@@ -17,30 +17,32 @@ export const en = {
   },
   cta: {
     primary: 'Start a project',
+    services: 'Our services',
     heading: 'Have a project in mind?',
-    text: 'Tell us what you’re trying to do. We’ll get back to you with next steps.',
+    text: 'Tell us what you’re trying to fix or build. We’ll reply within 3 business days with honest next steps, even if that’s “you don’t need us.”',
   },
   home: {
     servicesHeading: 'What we do',
-    workHeading: 'Selected work',
-    workAll: 'All case studies',
+    workHeading: 'Our products',
+    workAll: 'All products',
     aboutLink: 'More about us',
   },
   services: {
-    whatWeDo: 'What we do',
     engagements: 'Typical engagements',
     tech: 'Tools and technology',
     learnMore: 'Learn more',
   },
   work: {
-    client: 'Client',
-    industry: 'Industry',
-    services: 'Services',
-    year: 'Year',
-    tech: 'Technology',
-    readCase: 'Read case study',
-    next: 'Next case study',
-    placeholder: 'Placeholder',
+    category: 'Category',
+    status: 'Status',
+    statuses: {
+      inProduction: 'In production',
+      comingSoon: 'Coming soon',
+    },
+    builtWith: 'Built with',
+    learnMore: 'Learn more',
+    visit: 'Visit site',
+    next: 'Next product',
   },
   testimonial: {
     pending: 'Attribution pending permission',
@@ -86,7 +88,7 @@ export const en = {
     },
     success: {
       heading: 'Thanks. Your message is on its way.',
-      body: 'We’ll get back to you shortly at the email address you gave.',
+      body: 'We’ll reply within 3 business days at the email address you gave.',
     },
     fallback: {
       title: 'Message not sent',
@@ -97,12 +99,12 @@ export const en = {
     thanks: {
       title: 'Message sent',
       heading: 'Thanks. Your message is on its way.',
-      body: 'We’ll get back to you shortly.',
+      body: 'We’ll reply within 3 business days.',
       back: 'Back to home',
     },
   },
   footer: {
-    tagline: 'TODO: one-line positioning statement',
+    tagline: 'Custom software and web development',
     location: 'Ottawa, Canada',
     legal: 'Fosterlite Solutions Limited',
     navLabel: 'Footer',

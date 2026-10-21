@@ -1,35 +1,44 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
 import { t } from '@/i18n';
 
 interface Props {
   testimonial: CollectionEntry<'testimonials'>;
 }
 
-const { quote, name, role, company, permission } = Astro.props.testimonial.data;
-const initials = company
-  .split(/\s+/)
-  .map((word) => word[0])
-  .join('')
-  .slice(0, 2)
-  .toUpperCase();
+const { quote, company, name, role, context, initials, logo, permission } =
+  Astro.props.testimonial.data;
+const monogram =
+  initials ??
+  company
+    .split(/\s+/)
+    .map((word) => word[0])
+    .join('')
+    .slice(0, 3)
+    .toUpperCase();
 ---
 
 <figure class="mx-auto max-w-3xl">
+  {context && <p class="mb-8 max-w-2xl text-ink-muted">{context}</p>}
   <blockquote class="text-2xl leading-snug font-medium text-balance sm:text-3xl">
     <p>“{quote}”</p>
   </blockquote>
   <figcaption class="mt-8 flex items-center gap-4">
-    <span
-      aria-hidden="true"
-      class="flex size-12 shrink-0 items-center justify-center rounded-full bg-brand text-sm font-semibold text-on-brand"
-    >
-      {initials}
-    </span>
+    {logo ? (
+      <Image src={logo} alt="" class="size-12 shrink-0 rounded-full object-contain" />
+    ) : (
+      <span
+        aria-hidden="true"
+        class="flex size-12 shrink-0 items-center justify-center rounded-full bg-brand text-xs font-semibold tracking-wide text-on-brand"
+      >
+        {monogram}
+      </span>
+    )}
     <span class="text-sm">
-      <span class="block font-semibold">{name}</span>
-      <span class="block text-ink-muted">
-        {role}, {company}
+      {name && <span class="block font-semibold">{name}</span>}
+      <span class:list={['block', name ? 'text-ink-muted' : 'font-semibold']}>
+        {role ? `${role}, ${company}` : company}
       </span>
       {!permission && (
         <span class="mt-1 block text-xs text-ink-muted">{t.testimonial.pending}</span>

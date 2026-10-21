@@ -39,44 +39,38 @@ const services = await Promise.all(
       aria-labelledby={`${service.id}-heading`}
       class:list={['scroll-mt-20 py-20 sm:py-24', index % 2 === 0 && 'bg-surface']}
     >
-      <div class="mx-auto grid max-w-content gap-12 px-4 sm:px-6 lg:grid-cols-[2fr_3fr] lg:px-8">
+      <div class="mx-auto grid max-w-content gap-12 px-4 sm:px-6 lg:grid-cols-2 lg:gap-16 lg:px-8">
         <div>
           <h2 id={`${service.id}-heading`} class="text-headline font-semibold text-balance">
             {service.data.title}
           </h2>
-          <p class="mt-4 text-lg text-ink-muted">{service.data.summary}</p>
-          <div class="prose mt-6 text-base">
+          <div class="prose mt-6">
             <Content />
           </div>
         </div>
-        <div class="grid gap-10 sm:grid-cols-2">
-          <div>
-            <h3 class="text-sm font-semibold tracking-widest text-brand uppercase">
-              {t.services.whatWeDo}
-            </h3>
-            <ul class="mt-4 space-y-3">
-              {service.data.whatWeDo.map((item) => (
-                <li class="border-l-2 border-accent pl-4">{item}</li>
-              ))}
-            </ul>
-          </div>
+        <div class="grid content-start gap-10">
           <div>
             <h3 class="text-sm font-semibold tracking-widest text-brand uppercase">
               {t.services.engagements}
             </h3>
             <ul class="mt-4 space-y-3">
               {service.data.engagements.map((item) => (
-                <li class="border-l-2 border-line pl-4">{item}</li>
+                <li class="border-l-2 border-accent pl-4">{item}</li>
               ))}
             </ul>
           </div>
-          <div class="sm:col-span-2">
+          <div>
             <h3 class="text-sm font-semibold tracking-widest text-brand uppercase">
               {t.services.tech}
             </h3>
-            <ul class="mt-4 flex flex-wrap gap-2">
+            <ul class="mt-4 divide-y divide-line border-y border-line">
               {service.data.tech.map((item) => (
-                <li class="rounded-full border border-line bg-bg px-3 py-1 text-sm">{item}</li>
+                <li class="py-3 text-sm sm:grid sm:grid-cols-[10rem_1fr] sm:gap-4">
+                  {item.label && <span class="block font-semibold">{item.label}</span>}
+                  <span class:list={['block text-ink-muted', !item.label && 'sm:col-span-2']}>
+                    {item.value}
+                  </span>
+                </li>
               ))}
             </ul>
           </div>

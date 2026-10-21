@@ -1,9 +1,10 @@
 ---
-# Shortened from the quote on the current site (dropped the closing two sentences). Confirm wording, attribution and permission before launch (SCOPE §5).
-quote: Fosterlite has been a game-changer for our business. Their team took the time to understand our unique needs and delivered a custom software solution that exceeded our expectations. The transition to their system was seamless, and their ongoing support has been phenomenal.
-name: 'TODO: Name'
-role: 'TODO: Title'
+# Their existing words from the previous site, trimmed (CONTENT.md §5). Company-only attribution.
+# A reworded version that names the product is on hold; it needs Three Hills Capital's approval first.
+context: Three Hills Capital trades global fixed income securities for institutional clients. We moved their desk from spreadsheets to a trade management platform tailored to how they work.
+quote: Fosterlite took the time to understand our unique needs and delivered a custom software solution that exceeded our expectations. The transition was seamless, and their ongoing support has been phenomenal.
 company: Three Hills Capital
-permission: false
+initials: THC
+permission: true
 featured: true
 ---

@@ -1,46 +1,54 @@
 ---
+// Parked with the rest of src/pages/_work/ (see index.astro).
 import type { GetStaticPaths } from 'astro';
-import { getCollection, getEntries, render } from 'astro:content';
+import { getCollection, render } from 'astro:content';
 import { Image } from 'astro:assets';
+import Button from '@/components/Button.astro';
 import CTA from '@/components/CTA.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { t } from '@/i18n';
 
 export const getStaticPaths = (async () => {
-  const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.order);
-  return work.map((study, index) => ({
-    params: { slug: study.id },
-    props: { study, next: work[(index + 1) % work.length] },
+  const products = (await getCollection('work', (entry) => !entry.data.draft)).sort(
+    (a, b) => a.data.order - b.data.order,
+  );
+  return products.map((product, index) => ({
+    params: { slug: product.id },
+    props: { product, next: products[(index + 1) % products.length] },
   }));
 }) satisfies GetStaticPaths;
 
-const { study, next } = Astro.props;
-const { title, client, industry, summary, year, tech, cover, coverAlt, outcomes, placeholder } =
-  study.data;
-const services = await getEntries(study.data.services);
-const { Content } = await render(study);
+const { product, next } = Astro.props;
+const { name, title, category, status, summary, intro, tech, externalUrl, cover, coverAlt } =
+  product.data;
+const { Content } = await render(product);
 
 const facts = [
-  { label: t.work.client, value: client },
-  { label: t.work.industry, value: industry },
-  { label: t.work.services, value: services.map((s) => s.data.title).join(', ') },
-  ...(year ? [{ label: t.work.year, value: String(year) }] : []),
-  ...(tech.length ? [{ label: t.work.tech, value: tech.join(', ') }] : []),
+  { label: t.work.category, value: category },
+  { label: t.work.status, value: t.work.statuses[status] },
+  ...(tech.length ? [{ label: t.work.builtWith, value: tech.join(', ') }] : []),
 ];
 ---
 
-<BaseLayout title={title} description={summary} image={cover?.src}>
+<BaseLayout title={name} description={summary} image={cover?.src}>
   <article>
     <header class="mx-auto max-w-content px-4 pt-16 pb-12 sm:px-6 sm:pt-24 lg:px-8">
       <p class="mb-4 text-sm font-semibold tracking-widest text-brand uppercase">
         <a href="/work" class="hover:underline hover:underline-offset-4">
           {t.nav.work}
         </a>
-        {placeholder && <span class="ml-2 text-ink-muted normal-case">· {t.work.placeholder}</span>}
+        <span class="text-ink-muted"> · {name}</span>
       </p>
       <h1 class="max-w-4xl text-headline font-semibold text-balance sm:text-display">{title}</h1>
-      <p class="mt-6 max-w-2xl text-lg text-pretty text-ink-muted sm:text-xl">{summary}</p>
-      <dl class="mt-12 grid gap-6 border-t border-line pt-8 sm:grid-cols-2 lg:grid-cols-4">
+      <p class="mt-6 max-w-2xl text-lg text-pretty text-ink-muted sm:text-xl">{intro ?? summary}</p>
+      {externalUrl && (
+        <div class="mt-8">
+          <Button href={externalUrl} variant="secondary">
+            {t.work.visit}
+          </Button>
+        </div>
+      )}
+      <dl class="mt-12 grid gap-6 border-t border-line pt-8 sm:grid-cols-3">
         {facts.map((fact) => (
           <div>
             <dt class="text-sm text-ink-muted">{fact.label}</dt>
@@ -63,19 +71,6 @@ const facts = [
       </div>
     )}
 
-    {outcomes.length > 0 && (
-      <div class="mx-auto max-w-content px-4 pt-16 sm:px-6 lg:px-8">
-        <dl class="grid gap-6 sm:grid-cols-3">
-          {outcomes.map((outcome) => (
-            <div class="rounded-2xl bg-surface p-6">
-              <dt class="text-sm text-ink-muted">{outcome.label}</dt>
-              <dd class="mt-2 text-3xl font-semibold text-brand">{outcome.value}</dd>
-            </div>
-          ))}
-        </dl>
-      </div>
-    )}
-
     <div class="mx-auto max-w-content px-4 pt-4 pb-16 sm:px-6 lg:px-8">
       <div class="prose">
         <Content />
@@ -83,7 +78,7 @@ const facts = [
     </div>
   </article>
 
-  {next && next.id !== study.id && (
+  {next && next.id !== product.id && (
     <nav aria-label={t.work.next} class="border-t border-line">
       <a
         href={`/work/${next.id}`}
@@ -91,7 +86,7 @@ const facts = [
       >
         <span class="text-sm font-medium text-ink-muted">{t.work.next}</span>
         <span class="mt-2 block text-2xl font-semibold group-hover:underline group-hover:underline-offset-4">
-          {next.data.title} →
+          {next.data.name} →
         </span>
       </a>
     </nav>
