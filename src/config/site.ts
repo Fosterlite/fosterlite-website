@@ -2,7 +2,7 @@ import { t } from '@/i18n';
 
 export const site = {
   name: 'Fosterlite',
-  legalName: 'Fosterlite Solutions Limited',
+  legalName: 'Fosterlite Solutions Ltd.',
   url: 'https://fosterlite.com',
   defaultDescription:
     'Fosterlite builds custom software, web applications and websites for growing businesses and organizations, and advises on the technology behind them. An experienced team based in Ottawa, Canada.',

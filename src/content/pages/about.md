@@ -1,6 +1,6 @@
 ---
 title: About
-description: Fosterlite Solutions is a Canadian software and consulting company based in Ottawa. We design, build and support custom software, web platforms and the systems that hold a business together.
+description: Fosterlite Solutions Ltd. is a Canadian software and consulting company based in Ottawa. We design, build and support custom software, web platforms and the systems that hold a business together.
 eyebrow: About
 heading: Engineering-grade software, at the scale of your business.
 differentiators:

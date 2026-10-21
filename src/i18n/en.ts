@@ -106,7 +106,7 @@ export const en = {
   footer: {
     tagline: 'Custom software and web development',
     location: 'Ottawa, Canada',
-    legal: 'Fosterlite Solutions Limited',
+    legal: 'Fosterlite Solutions Ltd.',
     navLabel: 'Footer',
     privacy: 'Privacy',
     rights: 'All rights reserved.',

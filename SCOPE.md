@@ -4,7 +4,7 @@
 
 ## 1. Goal
 
-Replace the current WordPress (Astra theme) site with a fast, static, hand-built site that looks modern and credible. It should present Fosterlite Solutions Limited as a serious software and consulting partner.
+Replace the current WordPress (Astra theme) site with a fast, static, hand-built site that looks modern and credible. It should present Fosterlite Solutions Ltd. as a serious software and consulting partner.
 
 **Success looks like:**
 - The site reads as a real studio's site, not a theme. No stock starter graphics or placeholder avatars.
@@ -76,7 +76,8 @@ Content from the current site, to be **rewritten**, not copied verbatim:
 - [x] Revised hero headline and one-line positioning (CONTENT.md, 2026-10-21)
 - [x] ~~2–3 case studies~~: replaced by product pages, now suspended. No longer a launch blocker.
 - [x] Tech/skills to highlight: per-service stacks in `src/content/services/`
-- [x] Testimonial attribution + permission: company only, existing wording
+- [x] Testimonial attribution + permission: company only, existing wording (permission confirmed by Demi 2026-10-21)
+- [x] Legal name: **Fosterlite Solutions Ltd.** everywhere (footer, JSON-LD, privacy, About), decided 2026-10-21
 - [x] Logo files: SVG light + dark, in `src/assets/brand/`
 - [x] Palette (decided 2026-10-20): logo slate blue `#364F6B` as brand colour + **deep teal** accent (light `#0F766E` with white text, dark `#3CC6B6` with dark text; hover `#0B5F58` / `#6FD8CB`). All pairs pass WCAG AA. Chosen over lamp amber and ember orange.
 - [x] Contact email for form delivery: contact@fosterlite.com (also shown publicly, decided 2026-10-21)
