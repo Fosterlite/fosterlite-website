@@ -1,0 +1,20 @@
+---
+// Decorative brand graphic: the logo's ring with a cone of lamp light. Pure SVG, no image request.
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<svg viewBox="0 0 400 400" aria-hidden="true" focusable="false" class={className}>
+  <defs>
+    <linearGradient id="hero-beam" x1="0.75" y1="0.15" x2="0.3" y2="0.95">
+      <stop offset="0" stop-color="var(--c-accent)" stop-opacity="0.45"></stop>
+      <stop offset="1" stop-color="var(--c-accent)" stop-opacity="0"></stop>
+    </linearGradient>
+  </defs>
+  <circle cx="200" cy="200" r="184" fill="none" stroke="var(--c-brand)" stroke-width="6"></circle>
+  <path d="M262 132 L118 330 L330 330 Z" fill="url(#hero-beam)"></path>
+  <circle cx="262" cy="132" r="10" fill="var(--c-accent)"></circle>
+</svg>

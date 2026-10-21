@@ -1,0 +1,26 @@
+---
+import Button from './Button.astro';
+import { contactHref } from '@/config/site';
+import { t } from '@/i18n';
+
+interface Props {
+  heading?: string;
+  text?: string;
+}
+
+const { heading = t.cta.heading, text = t.cta.text } = Astro.props;
+---
+
+<section aria-labelledby="cta-heading" class="px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+  <div class="reveal mx-auto flex max-w-content flex-col items-start gap-8 rounded-3xl bg-band px-8 py-12 sm:px-12 sm:py-16 lg:flex-row lg:items-center lg:justify-between">
+    <div class="max-w-2xl">
+      <h2 id="cta-heading" class="text-headline font-semibold text-balance">
+        {heading}
+      </h2>
+      <p class="mt-4 text-lg text-ink-muted">{text}</p>
+    </div>
+    <Button href={contactHref} size="lg" class="shrink-0">
+      {t.cta.primary}
+    </Button>
+  </div>
+</section>

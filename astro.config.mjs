@@ -8,7 +8,7 @@ export default defineConfig({
   site: 'https://fosterlite.com',
   trailingSlash: 'never',
   build: { format: 'file' },
-  integrations: [sitemap()],
+  integrations: [sitemap({ filter: (page) => !page.includes('/contact/thanks') })],
   fonts: [
     {
       name: 'Instrument Sans',

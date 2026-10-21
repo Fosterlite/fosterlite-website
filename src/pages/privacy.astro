@@ -1,0 +1,18 @@
+---
+import { getEntry, render } from 'astro:content';
+import PageHero from '@/components/PageHero.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+
+const page = await getEntry('pages', 'privacy');
+if (!page) throw new Error('Missing src/content/pages/privacy.md');
+const { Content } = await render(page);
+---
+
+<BaseLayout title={page.data.title} description={page.data.description}>
+  <PageHero heading={page.data.heading} lede={page.data.lede} />
+  <div class="mx-auto max-w-content px-4 pb-24 sm:px-6 lg:px-8">
+    <div class="prose">
+      <Content />
+    </div>
+  </div>
+</BaseLayout>

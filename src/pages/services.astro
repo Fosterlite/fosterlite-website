@@ -1,0 +1,89 @@
+---
+import { getCollection, getEntry, render } from 'astro:content';
+import CTA from '@/components/CTA.astro';
+import PageHero from '@/components/PageHero.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { t } from '@/i18n';
+
+const page = await getEntry('pages', 'services');
+if (!page) throw new Error('Missing src/content/pages/services.md');
+
+const services = await Promise.all(
+  (await getCollection('services'))
+    .sort((a, b) => a.data.order - b.data.order)
+    .map(async (service) => ({ service, Content: (await render(service)).Content })),
+);
+---
+
+<BaseLayout title={page.data.title} description={page.data.description}>
+  <PageHero eyebrow={page.data.eyebrow} heading={page.data.heading} lede={page.data.lede}>
+    <nav aria-label={t.nav.services} class="mt-10">
+      <ul class="flex flex-wrap gap-3">
+        {services.map(({ service }) => (
+          <li>
+            <a
+              href={`#${service.id}`}
+              class="inline-block rounded-full border border-line px-4 py-2 text-sm font-medium hover:border-ink"
+            >
+              {service.data.title}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </PageHero>
+
+  {services.map(({ service, Content }, index) => (
+    <section
+      id={service.id}
+      aria-labelledby={`${service.id}-heading`}
+      class:list={['scroll-mt-20 py-20 sm:py-24', index % 2 === 0 && 'bg-surface']}
+    >
+      <div class="mx-auto grid max-w-content gap-12 px-4 sm:px-6 lg:grid-cols-[2fr_3fr] lg:px-8">
+        <div>
+          <h2 id={`${service.id}-heading`} class="text-headline font-semibold text-balance">
+            {service.data.title}
+          </h2>
+          <p class="mt-4 text-lg text-ink-muted">{service.data.summary}</p>
+          <div class="prose mt-6 text-base">
+            <Content />
+          </div>
+        </div>
+        <div class="grid gap-10 sm:grid-cols-2">
+          <div>
+            <h3 class="text-sm font-semibold tracking-widest text-brand uppercase">
+              {t.services.whatWeDo}
+            </h3>
+            <ul class="mt-4 space-y-3">
+              {service.data.whatWeDo.map((item) => (
+                <li class="border-l-2 border-accent pl-4">{item}</li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-sm font-semibold tracking-widest text-brand uppercase">
+              {t.services.engagements}
+            </h3>
+            <ul class="mt-4 space-y-3">
+              {service.data.engagements.map((item) => (
+                <li class="border-l-2 border-line pl-4">{item}</li>
+              ))}
+            </ul>
+          </div>
+          <div class="sm:col-span-2">
+            <h3 class="text-sm font-semibold tracking-widest text-brand uppercase">
+              {t.services.tech}
+            </h3>
+            <ul class="mt-4 flex flex-wrap gap-2">
+              {service.data.tech.map((item) => (
+                <li class="rounded-full border border-line bg-bg px-3 py-1 text-sm">{item}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+  ))}
+
+  <CTA />
+</BaseLayout>
