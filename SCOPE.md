@@ -4,7 +4,7 @@
 
 ## 1. Goal
 
-Replace the current WordPress (Astra theme) site with a fast, static, hand-built site that looks modern and credible. It should present Fosterlite Solutions Limited as a serious software and consulting partner.
+Replace the current WordPress (Astra theme) site with a fast, static, hand-built site that looks modern and credible. It should present Fosterlite Solutions Ltd. as a serious software and consulting partner.
 
 **Success looks like:**
 - The site reads as a real studio's site, not a theme. No stock starter graphics or placeholder avatars.
@@ -27,7 +27,7 @@ Replace the current WordPress (Astra theme) site with a fast, static, hand-built
 | Framework | **Astro 7** | Static output. Use React islands only where interactivity is needed (likely just the form). |
 | Styling | Tailwind CSS v4 | Tokens are CSS variables with light/dark values in `src/styles/global.css`, exposed through Tailwind's `@theme` (v4 has no JS config). No scattered hex values. |
 | Language | TypeScript 6.x | Pinned below 7 until `@astrojs/check` and `typescript-eslint` support TS 7. |
-| Content | Astro content collections (Markdown/MDX + typed schema) | Services, case studies, testimonials as collections. |
+| Content | Astro content collections (Markdown/MDX + typed schema) | Pages, services, products (`work`) and testimonials as collections. |
 | Hosting | **Netlify** (decided 2026-10-20) | Deploy on push to `main`. Deploy previews on PRs. Apex served via A record at the current DNS host (no nameserver move). `_headers` and `_redirects` live in `public/`. Chosen over Cloudflare Pages because Pages can only serve the apex if nameservers move to Cloudflare. |
 | Form backend | **Netlify Function → Resend** (decided 2026-10-20) | Sends from an @fosterlite.com address once the domain is verified in Resend (see §10). |
 | Spam protection | Cloudflare Turnstile + honeypot field | |
@@ -42,16 +42,18 @@ Start as a strong one-pager plus a few dedicated pages, so we have more indexabl
 
 | Route | Purpose |
 |---|---|
-| `/` | Home: hero, services overview, selected work, testimonial, about teaser, CTA |
+| `/` | Home: hero, services overview, testimonial, about teaser, CTA. (Products section returns with `/work`.) |
 | `/services` | One section per service, with what we do, typical engagements and tech |
-| `/work` | Case study index. **Ships at launch** (decided 2026-10-20); launch is blocked until 2–3 case studies are ready |
-| `/work/[slug]` | Individual case study (problem → approach → outcome) |
+| `/work` | **Suspended (decided 2026-10-21).** Will showcase Fosterlite's own products, not client case studies. On hold pending trademark checks on the product names: no route, nav item, home section, sitemap entry or product name anywhere on the site. |
+| `/work/[slug]` | Suspended with `/work`. Product page (problem → what it does → engineering decisions). |
 | `/about` | Who we are, how we work, Ottawa-based Canadian corporation |
 | `/contact` | Form + direct email |
 | `/privacy` | Short privacy policy (form data handling, analytics). PIPEDA-appropriate. |
 | `/404` | Custom not-found page |
 
-Navigation: Services · Work · About · Contact (CTA-styled button).
+Navigation: Services · About · Contact (CTA-styled button). Work returns when un-suspended.
+
+**Un-suspending `/work`:** set `site.features.work` to `true` in `src/config/site.ts`, move `src/pages/_work/` back to `src/pages/work/` (underscore folders aren't routed), add the product entries to `src/content/work/` from Demi's local copy, and restore the hero CTA if wanted. Product names must not be committed before then, because the GitHub repo is **public**. Demi's `CONTENT.md` is git-ignored for this reason (decided 2026-10-21).
 
 ## 5. Content inventory
 
@@ -60,7 +62,7 @@ Content from the current site, to be **rewritten**, not copied verbatim:
 - **Hero:** "Scalable Solutions for Every Business" + custom software tagline → rewrite to be more specific (who we serve, what outcome).
 - **Services:** Custom Software Development, Web Design, IT Consulting.
 - **About:** paragraph on tailored solutions, long-term partnerships.
-- **Testimonial:** Three Hills Capital. Needs a real name/title and logo or initials avatar, with permission. Remove the placeholder avatar.
+- **Testimonial:** Three Hills Capital, company-only attribution, "THC" monogram, with a context line in our words. Uses their existing words, trimmed. A reworded quote naming the product is on hold until the client approves it and the products are un-suspended.
 - **Why Us:** Integrity, Innovation, Customer Focus. These are generic; fold into About or replace with concrete differentiators.
 - **Contact form fields:** Name, Company, Email, Message.
 - **Contact details:** the current site shows no email, phone or address anywhere. Footer is just a copyright line.
@@ -71,10 +73,11 @@ Content from the current site, to be **rewritten**, not copied verbatim:
 - Service and About images are stock photos and the hero/Why Us graphics are Astra starter SVGs. None are reused (per §6).
 
 **Needed from Demi before content is final:**
-- [ ] Revised hero headline and one-line positioning
-- [ ] 2–3 case studies (can be anonymized): client type, problem, what was built, result. **Launch blocker.**
-- [ ] Tech/skills to highlight (e.g. Java, Vue/React, cloud)
-- [ ] Testimonial attribution + permission
+- [x] Revised hero headline and one-line positioning (CONTENT.md, 2026-10-21)
+- [x] ~~2–3 case studies~~: replaced by product pages, now suspended. No longer a launch blocker.
+- [x] Tech/skills to highlight: per-service stacks in `src/content/services/`
+- [x] Testimonial attribution + permission: company only, existing wording (permission confirmed by Demi 2026-10-21)
+- [x] Legal name: **Fosterlite Solutions Ltd.** everywhere (footer, JSON-LD, privacy, About), decided 2026-10-21
 - [x] Logo files: SVG light + dark, in `src/assets/brand/`
 - [x] Palette (decided 2026-10-20): logo slate blue `#364F6B` as brand colour + **deep teal** accent (light `#0F766E` with white text, dark `#3CC6B6` with dark text; hover `#0B5F58` / `#6FD8CB`). All pairs pass WCAG AA. Chosen over lamp amber and ember orange.
 - [x] Contact email for form delivery: contact@fosterlite.com (also shown publicly, decided 2026-10-21)
@@ -82,7 +85,7 @@ Content from the current site, to be **rewritten**, not copied verbatim:
 
 Until content arrives, build with clearly marked placeholder copy (`TODO:` in content files). Do not invent client names, metrics or testimonials.
 
-**Where content lives (Phase 2):** `src/content/pages/*.md` (hero, meta and body copy per page), `src/content/services/*.md`, `src/content/work/*.md` (case studies; body uses `## Problem / ## Approach / ## Outcome`), `src/content/testimonials/*.md`. Schemas in `src/content.config.ts` fail the build on missing fields. The testimonial quote is shortened from the current site's version.
+**Where content lives (Phase 2):** `src/content/pages/*.md` (hero, meta and body copy per page), `src/content/services/*.md`, `src/content/work/*.md` (products, currently empty while suspended), `src/content/testimonials/*.md`. Schemas in `src/content.config.ts` fail the build on missing fields. Copy source: Demi's local `CONTENT.md` (Draft 2), not committed.
 
 ## 6. Design direction
 
@@ -91,7 +94,7 @@ Until content arrives, build with clearly marked placeholder copy (`TODO:` in co
 - No stock photography of handshakes or laptops. Prefer typography, simple geometric or abstract visuals, real screenshots of work, and diagrams.
 - Subtle motion only (fade/translate on scroll, respecting `prefers-reduced-motion`).
 - Fully responsive. Design mobile-first, test at 360px, 768px, 1280px and 1536px.
-- Reusable components: `Button`, `Section`, `ServiceCard`, `CaseStudyCard`, `Testimonial`, `CTA`, `Header`, `Footer`.
+- Reusable components: `Button`, `Section`, `ServiceCard`, `ProductCard` (was `CaseStudyCard`), `Testimonial`, `CTA`, `Header`, `Footer`.
 
 ## 7. Quality requirements
 
@@ -174,7 +177,7 @@ Until content arrives, build with clearly marked placeholder copy (`TODO:` in co
 | 1. Foundation | Astro + Tailwind + TS scaffold, design tokens, layout, Header/Footer, deploy pipeline to preview URL |
 | 2. Pages | All routes from §4 with placeholder content in collections |
 | 3. Form | Contact function, Turnstile, email delivery, success/error states |
-| 4. Content | Real copy, case studies, images, OG image |
+| 4. Content | Real copy, images, OG image (products deferred while `/work` is suspended) |
 | 5. Polish | Accessibility + Lighthouse pass, SEO metadata, headers, 404, privacy page |
 | 6. Launch | DNS audit, redirects, cutover, post-launch verification (§10) |
 
@@ -182,10 +185,10 @@ Until content arrives, build with clearly marked placeholder copy (`TODO:` in co
 
 Run `npm run build && npm run check:launch`. It fails while any built page still contains `TODO`, which covers:
 
-- [ ] Every `src/content/work/*.md` entry is real content with `placeholder: false` (2–3 case studies)
-- [ ] Testimonial has a real name and title, and `permission: true`
-- [ ] Hero headline, positioning line, About copy and differentiators supplied
-- [ ] Tech stack per service confirmed
+- [x] Hero headline, positioning line, About copy and differentiators supplied
+- [x] Tech stack per service confirmed
+- [x] Testimonial attribution and `permission: true`
+- [ ] No product names anywhere in the build while `/work` is suspended
 - [ ] Privacy policy reviewed, contact email and "last updated" date filled in
 - [ ] Default OG image designed and passed to `BaseLayout`
 
@@ -194,7 +197,7 @@ Run `npm run build && npm run check:launch`. It fails while any built page still
 - [x] Host: **Netlify**
 - [x] Form delivery: **own Netlify Function + Resend**
 - [x] Analytics provider: **Cloudflare Web Analytics**
-- [x] Ship `/work` at launch: **yes**, with 2–3 case studies as a launch blocker
+- [x] Ship `/work` at launch: **no**. Suspended pending trademark checks (2026-10-21; reverses the 2026-10-20 decision)
 - [x] Dark mode approach: **system preference only, no toggle**
 - [x] French version planned? **Not v1; keep i18n-ready** (strings file + content collections)
 - [x] Where DNS is currently managed: cPanel host zone (webhostbox nameservers). See §10 audit.

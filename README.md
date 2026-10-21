@@ -1,6 +1,6 @@
 # fosterlite.com
 
-Marketing site for Fosterlite Solutions Limited. Static [Astro](https://astro.build) site with Tailwind CSS, hosted on Netlify. See [SCOPE.md](SCOPE.md) for the full brief.
+Marketing site for Fosterlite Solutions Ltd. Static [Astro](https://astro.build) site with Tailwind CSS, hosted on Netlify. See [SCOPE.md](SCOPE.md) for the full brief.
 
 ## Local development
 

@@ -7,7 +7,7 @@ lede: 'Last updated: TODO (set at launch)'
 
 TODO: Draft for review. Not legal advice; have it checked before launch.
 
-Fosterlite Solutions Limited ("Fosterlite", "we") respects your privacy and handles personal information in line with Canada's _Personal Information Protection and Electronic Documents Act_ (PIPEDA).
+Fosterlite Solutions Ltd. ("Fosterlite", "we") respects your privacy and handles personal information in line with Canada's _Personal Information Protection and Electronic Documents Act_ (PIPEDA).
 
 ## What we collect
 

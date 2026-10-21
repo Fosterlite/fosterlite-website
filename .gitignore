@@ -25,3 +25,6 @@ pnpm-debug.log*
 
 # netlify
 .netlify/
+
+# Local content drafts. Names products that must stay unpublished until trademark checks clear.
+CONTENT.md

@@ -2,17 +2,17 @@
 title: IT consulting
 summary: Practical advice on systems, software choices and digital projects, from people who also build them.
 order: 3
-whatWeDo:
-  - Technology and vendor selection
-  - Reviews of existing systems, architecture and code
-  - Planning and de-risking digital transformation projects
-  - Technical advice alongside your in-house team
 engagements:
-  - A short assessment with written recommendations
-  - Ongoing advisory hours
-  - Project oversight on behalf of a non-technical team
+  - Technology and vendor selection
+  - Microsoft 365 and email setup, migration and troubleshooting
+  - Domain, DNS and hosting cleanup
+  - Architecture reviews
+  - Project scoping before you commit budget
 tech:
-  - 'TODO: confirm areas of expertise with Demi'
+  - value: Microsoft 365 and Exchange Online
+  - value: AWS and Microsoft Azure architecture
+  - value: DNS, domains, email authentication (SPF, DKIM, DMARC)
+  - value: cPanel and traditional hosting migrations
 ---
 
-TODO: Draft intro. Independent advice grounded in hands-on delivery experience, so recommendations are realistic about cost, effort and risk.
+Not every problem needs new software. Sometimes the right answer is configuring what you already pay for, choosing the right vendor, or untangling a setup that grew without a plan. We give straight, vendor-neutral advice, and because we build systems ourselves, our recommendations are ones we'd be willing to implement.
