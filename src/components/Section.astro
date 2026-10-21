@@ -1,0 +1,34 @@
+---
+interface Props {
+  id?: string;
+  eyebrow?: string;
+  title?: string;
+  tone?: 'default' | 'surface';
+  class?: string;
+}
+
+const { id, eyebrow, title, tone = 'default', class: className } = Astro.props;
+const headingId = title ? `${id ?? 'section'}-heading` : undefined;
+---
+
+<section
+  id={id}
+  aria-labelledby={headingId}
+  class:list={['py-20 sm:py-28', tone === 'surface' && 'bg-surface', className]}
+>
+  <div class="mx-auto max-w-content px-4 sm:px-6 lg:px-8">
+    {(eyebrow || title) && (
+      <header class="mb-12 max-w-2xl">
+        {eyebrow && (
+          <p class="mb-3 text-sm font-semibold tracking-widest text-brand uppercase">{eyebrow}</p>
+        )}
+        {title && (
+          <h2 id={headingId} class="text-headline font-semibold text-balance">
+            {title}
+          </h2>
+        )}
+      </header>
+    )}
+    <slot />
+  </div>
+</section>

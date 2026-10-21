@@ -1,0 +1,18 @@
+---
+import Button from '@/components/Button.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { t } from '@/i18n';
+---
+
+<BaseLayout title={t.notFound.title} noindex>
+  <section class="mx-auto max-w-content px-4 py-28 sm:px-6 sm:py-36 lg:px-8">
+    <p class="mb-4 text-sm font-semibold tracking-widest text-brand uppercase">404</p>
+    <h1 class="max-w-2xl text-headline font-semibold text-balance">{t.notFound.heading}</h1>
+    <p class="mt-4 max-w-xl text-lg text-ink-muted">{t.notFound.body}</p>
+    <div class="mt-10">
+      <Button href="/" size="lg">
+        {t.notFound.back}
+      </Button>
+    </div>
+  </section>
+</BaseLayout>

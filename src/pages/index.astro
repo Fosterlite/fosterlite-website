@@ -1,0 +1,37 @@
+---
+import Button from '@/components/Button.astro';
+import Section from '@/components/Section.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { contactHref } from '@/config/site';
+import { t } from '@/i18n';
+
+// Phase 1 placeholder. Real sections and copy arrive in Phase 2 via content collections.
+---
+
+<BaseLayout>
+  <section class="mx-auto max-w-content px-4 pt-20 pb-24 sm:px-6 sm:pt-28 sm:pb-32 lg:px-8">
+    <p class="mb-5 text-sm font-semibold tracking-widest text-brand uppercase">
+      Software &amp; consulting · Ottawa
+    </p>
+    <h1 class="max-w-4xl text-display font-semibold text-balance">
+      TODO: Specific headline. Who we serve and the outcome we deliver.
+    </h1>
+    <p class="mt-6 max-w-2xl text-lg text-pretty text-ink-muted sm:text-xl">
+      TODO: One-line positioning. Placeholder until Demi supplies the revised hero copy (SCOPE §5).
+    </p>
+    <div class="mt-10 flex flex-wrap gap-3">
+      <Button href={contactHref} size="lg">
+        {t.cta.primary}
+      </Button>
+      <Button href="/services" variant="secondary" size="lg">
+        {t.nav.services}
+      </Button>
+    </div>
+  </section>
+
+  <Section id="services" eyebrow={t.nav.services} title="TODO: Services overview" tone="surface">
+    <p class="reveal max-w-2xl text-ink-muted">
+      Custom software development, web design and IT consulting. Built out in Phase 2.
+    </p>
+  </Section>
+</BaseLayout>

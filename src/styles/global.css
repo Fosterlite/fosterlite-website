@@ -1,0 +1,113 @@
+@import 'tailwindcss';
+
+/*
+ * Design tokens.
+ * Raw values live here as CSS variables with light/dark variants (system preference only, see SCOPE §6).
+ * Tailwind utilities (bg-surface, text-ink, border-line, …) are generated from the @theme block below.
+ * Use the utilities in components; never hard-code hex values.
+ */
+:root {
+  color-scheme: light dark;
+
+  --c-bg: #ffffff;
+  --c-surface: #f4f6f9;
+  --c-ink: #15212e;
+  --c-ink-muted: #4f5d6d;
+  --c-line: #dde3ea;
+  --c-brand: #364f6b; /* logo blue */
+  --c-on-brand: #ffffff;
+  --c-accent: #0f766e; /* deep teal */
+  --c-accent-hover: #0b5f58;
+  --c-on-accent: #ffffff;
+  --c-focus: #364f6b;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --c-bg: #0e151d;
+    --c-surface: #16202b;
+    --c-ink: #f5f5f5;
+    --c-ink-muted: #a7b3c0;
+    --c-line: #263342;
+    --c-brand: #9fb7d1;
+    --c-on-brand: #0e151d;
+    --c-accent: #3cc6b6;
+    --c-accent-hover: #6fd8cb;
+    --c-on-accent: #0e151d;
+    --c-focus: #3cc6b6;
+  }
+}
+
+@theme inline {
+  --color-bg: var(--c-bg);
+  --color-surface: var(--c-surface);
+  --color-ink: var(--c-ink);
+  --color-ink-muted: var(--c-ink-muted);
+  --color-line: var(--c-line);
+  --color-brand: var(--c-brand);
+  --color-on-brand: var(--c-on-brand);
+  --color-accent: var(--c-accent);
+  --color-accent-hover: var(--c-accent-hover);
+  --color-on-accent: var(--c-on-accent);
+  --color-focus: var(--c-focus);
+
+  --font-sans: var(--font-instrument-sans);
+}
+
+@theme {
+  --text-display: clamp(2.5rem, 1.6rem + 4vw, 4.5rem);
+  --text-display--line-height: 1.05;
+  --text-display--letter-spacing: -0.03em;
+  --text-headline: clamp(1.875rem, 1.4rem + 2vw, 2.75rem);
+  --text-headline--line-height: 1.15;
+  --text-headline--letter-spacing: -0.02em;
+
+  --container-content: 72rem;
+}
+
+@layer base {
+  html {
+    @apply bg-bg font-sans text-ink antialiased;
+    text-rendering: optimizeLegibility;
+    scroll-behavior: smooth;
+  }
+
+  :focus-visible {
+    @apply rounded-sm outline-2 outline-offset-2 outline-focus;
+  }
+
+  ::selection {
+    @apply bg-accent text-on-accent;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+}
+
+/* Subtle fade/translate on scroll. CSS-only (scroll-driven animations), so zero JS;
+   browsers without support simply show content immediately. */
+@layer utilities {
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      .reveal {
+        animation: reveal linear both;
+        animation-timeline: view();
+        animation-range: entry 0% entry 40%;
+      }
+    }
+  }
+}
+
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translateY(1.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
