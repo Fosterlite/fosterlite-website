@@ -10,7 +10,7 @@ interface Props {
   /** Page title without the site name. Omit on the home page. */
   title?: string;
   description?: string;
-  /** Absolute or root-relative path to a 1200×630 image. TODO: designed default OG image (Phase 4). */
+  /** Absolute or root-relative path to a 1200×630 share image. Defaults to /og-default.png. */
   image?: string;
   noindex?: boolean;
 }
@@ -19,7 +19,8 @@ const { title, description = site.defaultDescription, image, noindex = false } =
 
 const fullTitle = title ? `${title} · ${site.name}` : `${site.name}: ${t.footer.tagline}`;
 const canonical = new URL(Astro.url.pathname.replace(/\.html$/, ''), site.url).href;
-const ogImage = image ? new URL(image, site.url).href : undefined;
+// The default share image is rendered from design/og/ (see README).
+const ogImage = new URL(image ?? '/og-default.png', site.url).href;
 const beaconToken = import.meta.env.PUBLIC_CF_BEACON_TOKEN;
 
 const organization = {
@@ -28,7 +29,7 @@ const organization = {
   name: site.legalName,
   alternateName: site.name,
   url: site.url,
-  logo: new URL('/favicon.svg', site.url).href,
+  logo: new URL('/logo-512.png', site.url).href,
   ...(site.email && { email: site.email }),
   address: {
     '@type': 'PostalAddress',
@@ -50,6 +51,7 @@ const organization = {
     {noindex && <meta name="robots" content="noindex" />}
 
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="sitemap" href="/sitemap-index.xml" />
     <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#0e151d" media="(prefers-color-scheme: dark)" />
@@ -60,8 +62,15 @@ const organization = {
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:locale" content={t.lang.replace('-', '_')} />
-    {ogImage && <meta property="og:image" content={ogImage} />}
-    <meta name="twitter:card" content={ogImage ? 'summary_large_image' : 'summary'} />
+    <meta property="og:image" content={ogImage} />
+    {!image && (
+      <>
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content={t.meta.ogImageAlt} />
+      </>
+    )}
+    <meta name="twitter:card" content="summary_large_image" />
 
     <Font cssVariable="--font-instrument-sans" preload={[{ subset: 'latin' }]} />
 

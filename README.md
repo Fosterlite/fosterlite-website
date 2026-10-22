@@ -26,6 +26,7 @@ npm run dev            # http://localhost:4321
 
 ```
 design/brand/        Original logo files (not shipped)
+design/og/           Sources for the share image and icons (not shipped)
 public/              Static files: favicon, robots.txt, _headers, _redirects
 src/assets/brand/    Optimised logos used by the site
 src/components/      Header, Footer, Button, Section, Logo, …
@@ -54,6 +55,16 @@ Set these in Netlify → Site configuration → Environment variables. Never com
 `POST /api/contact` is a Netlify Function (`netlify/functions/contact.mts`). It checks the hidden honeypot field, validates input (`src/lib/contact.ts`, shared with the browser), verifies the Cloudflare Turnstile token, applies a per-IP limit of 5 messages per 10 minutes (Netlify Blobs, hashed IPs), then sends the email through Resend.
 
 Without JavaScript the form still posts, but Turnstile can't run, so the visitor is redirected to `/contact/error`, which shows the email address. Local builds use Cloudflare's always-pass test site key; Netlify builds fail if `PUBLIC_TURNSTILE_SITE_KEY` is missing.
+
+## Brand images
+
+`public/og-default.png` (1200×630 share image), `public/logo-512.png` (logo in structured data) and `public/apple-touch-icon.png` (180×180) are rendered from the HTML sources in `design/og/` with headless Chrome:
+
+```sh
+node scripts/render-brand-images.mjs   # macOS, needs Google Chrome
+```
+
+Re-run it after changing the headline, logo or brand colours, and commit the PNGs.
 
 ## Deploy
 
