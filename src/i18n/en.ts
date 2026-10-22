@@ -5,6 +5,9 @@
 export const en = {
   lang: 'en-CA',
   skipToContent: 'Skip to content',
+  meta: {
+    ogImageAlt: 'Fosterlite: Custom software that fits how your business actually runs.',
+  },
   nav: {
     label: 'Main',
     menu: 'Menu',

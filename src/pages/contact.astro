@@ -153,8 +153,6 @@ const errorClass = 'mt-2 text-sm font-medium text-danger';
   </div>
 </BaseLayout>
 
-<script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-
 <script>
   import { validateContact, type ContactResult, type Field, type FieldErrors } from '@/lib/contact';
   import { t } from '@/i18n';
@@ -178,6 +176,24 @@ const errorClass = 'mt-2 text-sm font-medium text-danger';
 
     // The script owns validation messages from here; native bubbles would duplicate them.
     form.noValidate = true;
+
+    // Turnstile's challenge is CPU-heavy, so load it only once it's needed: on first interaction
+    // with the form, or shortly after the page has loaded. This keeps it off the first paint.
+    let turnstileRequested = false;
+    const loadTurnstile = () => {
+      if (turnstileRequested) return;
+      turnstileRequested = true;
+      const script = document.createElement('script');
+      script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+      script.async = true;
+      document.head.append(script);
+    };
+    for (const type of ['focusin', 'pointerdown', 'keydown']) {
+      form.addEventListener(type, loadTurnstile, { once: true, passive: true });
+    }
+    const loadWhenIdle = () => setTimeout(loadTurnstile, 3000);
+    if (document.readyState === 'complete') loadWhenIdle();
+    else window.addEventListener('load', loadWhenIdle, { once: true });
 
     const showErrors = (errors: FieldErrors) => {
       for (const field of fields) {
