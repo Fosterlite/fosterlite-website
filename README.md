@@ -41,14 +41,14 @@ src/styles/global.css  Design tokens (colours, type scale) and base styles
 
 Set these in Netlify → Site configuration → Environment variables. Never commit them.
 
-| Variable                    | Used for                                                                                              |
-| --------------------------- | ----------------------------------------------------------------------------------------------------- |
-| `PUBLIC_CF_BEACON_TOKEN`    | Cloudflare Web Analytics. Analytics are off when unset.                                               |
-| `PUBLIC_TURNSTILE_SITE_KEY` | Contact form spam check (public key).                                                                 |
-| `TURNSTILE_SECRET_KEY`      | Contact form spam check (server).                                                                     |
-| `RESEND_API_KEY`            | Sending contact form emails.                                                                          |
-| `CONTACT_TO_EMAIL`          | Inbox that receives enquiries.                                                                        |
-| `CONTACT_FROM_EMAIL`        | Sender, e.g. `Fosterlite Website <website@fosterlite.com>`. Must be on the domain verified in Resend. |
+| Variable                    | Used for                                                                                                               |
+| --------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `PUBLIC_CF_BEACON_TOKEN`    | Cloudflare Web Analytics token: the 32-character value only, not the snippet. Analytics are off when unset or invalid. |
+| `PUBLIC_TURNSTILE_SITE_KEY` | Contact form spam check (public key).                                                                                  |
+| `TURNSTILE_SECRET_KEY`      | Contact form spam check (server).                                                                                      |
+| `RESEND_API_KEY`            | Sending contact form emails.                                                                                           |
+| `CONTACT_TO_EMAIL`          | Inbox that receives enquiries.                                                                                         |
+| `CONTACT_FROM_EMAIL`        | Sender, e.g. `Fosterlite Website <website@fosterlite.com>`. Must be on the domain verified in Resend.                  |
 
 ## Contact form
 

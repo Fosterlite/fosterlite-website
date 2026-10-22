@@ -21,7 +21,13 @@ const fullTitle = title ? `${title} · ${site.name}` : `${site.name}: ${t.footer
 const canonical = new URL(Astro.url.pathname.replace(/\.html$/, ''), site.url).href;
 // The default share image is rendered from design/og/ (see README).
 const ogImage = new URL(image ?? '/og-default.png', site.url).href;
-const beaconToken = import.meta.env.PUBLIC_CF_BEACON_TOKEN;
+// Cloudflare Web Analytics token: the 32-character hex value only, not the whole snippet.
+// Anything else is ignored (with a build warning) so a bad value can't produce broken markup.
+const rawBeaconToken = (import.meta.env.PUBLIC_CF_BEACON_TOKEN ?? '').trim();
+const beaconToken = /^[0-9a-f]{32}$/i.test(rawBeaconToken) ? rawBeaconToken : '';
+if (rawBeaconToken && !beaconToken) {
+  console.warn('PUBLIC_CF_BEACON_TOKEN is not a 32-character token; analytics disabled.');
+}
 
 const organization = {
   '@context': 'https://schema.org',
