@@ -189,7 +189,7 @@ Run `npm run build && npm run check:launch`. It fails while any built page still
 - [x] Tech stack per service confirmed
 - [x] Testimonial attribution and `permission: true`
 - [ ] No product names anywhere in the build while `/work` is suspended
-- [x] Privacy policy: review note removed and dated October 21, 2026. Lawyer review in progress (Demi, 2026-10-21); update the date if the text changes.
+- [x] Privacy policy: final lawyer-reviewed text (dated October 22, 2026). Privacy inquiries go to LegallyYours (info@legallyyours.org), not contact@fosterlite.com. Change the wording only with legal review, and update the date when it changes.
 - [x] Default OG image designed (`public/og-default.png`, default in `BaseLayout`), plus apple-touch-icon and PNG logo for JSON-LD
 
 **Phase 5 results (2026-10-22):** Lighthouse mobile, local build: 100 / 100 / 100 / 100 on every page (404 SEO is lower by design: `noindex`). Live checks found Netlify's injected toolbar script (blocked by our CSP, harmless; disable the Netlify Drawer/toolbar) and a malformed analytics beacon: `PUBLIC_CF_BEACON_TOKEN` held Cloudflare's whole snippet instead of the 32-character token. It must be the token only; the build now ignores any other value and warns. Turnstile is now loaded on first form interaction or 3 s after page load, because its challenge delayed LCP on the contact page to 6.4 s on throttled mobile. The beacon's report is CORS-blocked on `*.netlify.app` because the analytics site is registered for fosterlite.com; expected to work after cutover.
