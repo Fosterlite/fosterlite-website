@@ -162,6 +162,10 @@ Until content arrives, build with clearly marked placeholder copy (`TODO:` in co
 5. **Verify after cutover:** send/receive test emails to and from @fosterlite.com, run a form submission, check HTTPS on both apex and `www`, and resubmit the sitemap in Search Console.
 6. Keep the WordPress install available (not public) for ~30 days as a fallback, then decommission it and the cPanel web hosting if it isn't needed for email.
 
+**Launched 2026-10-22.** `@` → A `75.2.60.5` and `www` → CNAME `adorable-crisp-55f844.netlify.app` (TTL 300); `webmail`, `cpanel` and `ftp` repointed to A `208.91.199.115` first. Let's Encrypt certificate covers apex and www; www and http redirect to `https://fosterlite.com`. All mail records verified unchanged. Rollback: `@` → A `208.91.199.115`, `www` → CNAME `fosterlite.com`.
+
+Remaining after launch: raise `@`/`www` TTL back to 14400 (~2026-10-29); remove WordPress files from cPanel, keeping the hosting account for email (~2026-11-21); turn off the Netlify toolbar (its inline script trips our CSP); optional SPF `+a` removal and DMARC `p=none`.
+
 ## 11. Repo conventions
 
 - `main` is production; work happens on branches with PR previews.
