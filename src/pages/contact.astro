@@ -127,6 +127,7 @@ const errorClass = 'mt-2 text-sm font-medium text-danger';
           <div
             class="cf-turnstile"
             data-sitekey={turnstileSiteKey}
+            data-action="contact"
             data-theme="auto"
             data-size="flexible"
           ></div>
@@ -176,6 +177,8 @@ const errorClass = 'mt-2 text-sm font-medium text-danger';
 
     // The script owns validation messages from here; native bubbles would duplicate them.
     form.noValidate = true;
+    // Sent as fill_ms; the server treats implausibly fast submissions as possible spam.
+    const startedAt = performance.now();
 
     // Turnstile's challenge is CPU-heavy, so load it only once it's needed: on first interaction
     // with the form, or shortly after the page has loaded. This keeps it off the first paint.
@@ -242,6 +245,7 @@ const errorClass = 'mt-2 text-sm font-medium text-danger';
       event.preventDefault();
       showFailure();
       const data = new FormData(form);
+      data.set('fill_ms', String(Math.round(performance.now() - startedAt)));
       const { errors } = validateContact(Object.fromEntries(data));
       showErrors(errors);
       if (Object.keys(errors).length > 0) {

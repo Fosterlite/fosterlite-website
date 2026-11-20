@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import { handleContact, type ContactDeps } from '../src/lib/contact-handler.ts';
 import type { ContactData } from '../src/lib/contact.ts';
+import type { SpamReason } from '../src/lib/spam.ts';
 
 const valid = {
   name: 'Ada Lovelace',
@@ -9,6 +10,7 @@ const valid = {
   email: 'ada@example.com',
   message: 'We need a system to replace our spreadsheets.',
   'cf-turnstile-response': 'token',
+  fill_ms: '45000',
 };
 
 function post(fields: Record<string, string>, json = true) {
@@ -22,13 +24,21 @@ function post(fields: Record<string, string>, json = true) {
 
 function deps(overrides: Partial<ContactDeps> = {}) {
   const sent: ContactData[] = [];
+  const flags: SpamReason[][] = [];
+  const hostnames: string[] = [];
   const d: ContactDeps = {
-    verifyTurnstile: async () => true,
+    verifyTurnstile: async (_token, _ip, hostname) => {
+      hostnames.push(hostname);
+      return true;
+    },
     allowRequest: async () => true,
-    sendEmail: async (data) => void sent.push(data),
+    sendEmail: async (data, reasons) => {
+      sent.push(data);
+      flags.push(reasons);
+    },
     ...overrides,
   };
-  return { d, sent };
+  return { d, sent, flags, hostnames };
 }
 
 describe('handleContact', () => {
@@ -108,6 +118,41 @@ describe('handleContact', () => {
     assert.equal(res.status, 502);
     assert.deepEqual(await res.json(), { ok: false, error: 'server' });
     assert.equal(logged.length, 1);
+  });
+
+  it('verifies the Turnstile token against the hostname the form was posted to', async () => {
+    const { d, hostnames } = deps();
+    await handleContact(post(valid), '1.2.3.4', d);
+    assert.deepEqual(hostnames, ['fosterlite.com']);
+  });
+
+  it('silently drops spam with link markup and reports success', async () => {
+    const logged: unknown[] = [];
+    const { d, sent } = deps({ log: (_m, detail) => void logged.push(detail) });
+    const spam = {
+      ...valid,
+      message: 'Visit <a href=https://example.ru>our site</a> for cheap courses.',
+    };
+    const res = await handleContact(post(spam), '1.2.3.4', d);
+    assert.equal(res.status, 200);
+    assert.deepEqual(await res.json(), { ok: true });
+    assert.equal(sent.length, 0);
+    assert.deepEqual(logged, [['linkMarkup']]);
+  });
+
+  it('delivers suspicious messages with their spam reasons', async () => {
+    const { d, sent, flags } = deps();
+    const noFillTime: Record<string, string> = { ...valid };
+    delete noFillTime.fill_ms;
+    await handleContact(post(noFillTime), '1.2.3.4', d);
+    assert.equal(sent.length, 1);
+    assert.deepEqual(flags, [['tooFast']]);
+  });
+
+  it('delivers normal messages unflagged', async () => {
+    const { d, flags } = deps();
+    await handleContact(post(valid), '1.2.3.4', d);
+    assert.deepEqual(flags, [[]]);
   });
 
   it('collapses newlines in single-line fields', async () => {
