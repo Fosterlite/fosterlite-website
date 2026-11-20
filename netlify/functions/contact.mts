@@ -2,6 +2,7 @@ import type { Config, Context } from '@netlify/functions';
 import { getStore } from '@netlify/blobs';
 import { handleContact } from '../../src/lib/contact-handler.ts';
 import type { ContactData } from '../../src/lib/contact.ts';
+import type { SpamReason } from '../../src/lib/spam.ts';
 
 const RATE_LIMIT = { max: 5, windowMs: 10 * 60 * 1000 };
 
@@ -11,7 +12,19 @@ function env(name: string): string {
   return value;
 }
 
-async function verifyTurnstile(token: string, ip: string): Promise<boolean> {
+// Must match data-action on the widget in src/pages/contact.astro.
+const TURNSTILE_ACTION = 'contact';
+
+const SPAM_REASON_TEXT: Record<SpamReason, string> = {
+  linkMarkup: 'HTML link markup',
+  cyrillic: 'mostly Cyrillic text',
+  manyLinks: 'several links',
+  linkInName: 'link in name or company',
+  spamPhrase: 'common spam phrase',
+  tooFast: 'form filled in unusually fast',
+};
+
+async function verifyTurnstile(token: string, ip: string, hostname: string): Promise<boolean> {
   const body = new FormData();
   body.append('secret', env('TURNSTILE_SECRET_KEY'));
   body.append('response', token);
@@ -20,8 +33,17 @@ async function verifyTurnstile(token: string, ip: string): Promise<boolean> {
     method: 'POST',
     body,
   });
-  const result = (await res.json()) as { success?: boolean };
-  return result.success === true;
+  const result = (await res.json()) as { success?: boolean; hostname?: string; action?: string };
+  if (result.success !== true) return false;
+  // Reject tokens solved on another site or by another widget and replayed here.
+  if (result.hostname !== hostname || result.action !== TURNSTILE_ACTION) {
+    console.warn('Turnstile token mismatch', {
+      expected: { hostname, action: TURNSTILE_ACTION },
+      got: { hostname: result.hostname, action: result.action },
+    });
+    return false;
+  }
+  return true;
 }
 
 // Per-IP sliding window stored in Netlify Blobs. IPs are hashed so no raw addresses are kept.
@@ -39,7 +61,11 @@ async function allowRequest(ip: string): Promise<boolean> {
   return true;
 }
 
-async function sendEmail({ name, company, email, message }: ContactData): Promise<void> {
+async function sendEmail(
+  { name, company, email, message }: ContactData,
+  spamReasons: SpamReason[],
+): Promise<void> {
+  const flag = spamReasons.length > 0;
   const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: {
@@ -50,8 +76,11 @@ async function sendEmail({ name, company, email, message }: ContactData): Promis
       from: env('CONTACT_FROM_EMAIL'),
       to: [env('CONTACT_TO_EMAIL')],
       reply_to: email,
-      subject: `Website enquiry from ${name}${company ? ` (${company})` : ''}`,
+      subject: `${flag ? '[Possible spam] ' : ''}Website enquiry from ${name}${company ? ` (${company})` : ''}`,
       text: [
+        ...(flag
+          ? [`Possible spam: ${spamReasons.map((r) => SPAM_REASON_TEXT[r]).join(', ')}`, '']
+          : []),
         `Name: ${name}`,
         `Company: ${company || 'Not given'}`,
         `Email: ${email}`,
@@ -71,7 +100,7 @@ export default (request: Request, context: Context) =>
     verifyTurnstile,
     allowRequest,
     sendEmail,
-    log: (message, error) => console.error(message, error),
+    log: (message, detail) => console.error(message, detail),
   });
 
 export const config: Config = {

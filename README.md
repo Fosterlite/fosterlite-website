@@ -52,7 +52,7 @@ Set these in Netlify → Site configuration → Environment variables. Never com
 
 ## Contact form
 
-`POST /api/contact` is a Netlify Function (`netlify/functions/contact.mts`). It checks the hidden honeypot field, validates input (`src/lib/contact.ts`, shared with the browser), verifies the Cloudflare Turnstile token, applies a per-IP limit of 5 messages per 10 minutes (Netlify Blobs, hashed IPs), then sends the email through Resend.
+`POST /api/contact` is a Netlify Function (`netlify/functions/contact.mts`). It checks the hidden honeypot field, validates input (`src/lib/contact.ts`, shared with the browser), verifies the Cloudflare Turnstile token, applies a per-IP limit of 5 messages per 10 minutes (Netlify Blobs, hashed IPs), then runs content checks for spam that got past Turnstile (`src/lib/spam.ts`): link markup is dropped silently, and other suspicious messages arrive with a `[Possible spam]` subject. Finally it sends the email through Resend.
 
 Without JavaScript the form still posts, but Turnstile can't run, so the visitor is redirected to `/contact/error`, which shows the email address. Local builds use Cloudflare's always-pass test site key; Netlify builds fail if `PUBLIC_TURNSTILE_SITE_KEY` is missing.
 
